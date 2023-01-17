@@ -53,8 +53,6 @@ function setPreviewSize(){
 		img.style.height = height + 'px';
 		img.style.width = 'auto';
 	}
-
-    console.log(img.style.width);
 	document.getElementById('container').setAttribute("style","width:" + img.style.width);
 }
 
