@@ -55,7 +55,7 @@ function setPreviewSize(){
 	}
 
     console.log(img.style.width);
-	document.getElementById('container').setAttribute("style","width:" + img.clientWidth);
+	document.getElementById('container').setAttribute("style","width:" + img.clientWidth + "px");
 }
 
 function getLightColor(){
