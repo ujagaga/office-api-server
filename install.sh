@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt install uvicorn python3-pip
+sudo apt install uvicorn python3-pip ustreamer
 pip install fastapi python-multipart requests sqlalchemy jinja2 paho-mqtt
 
 SERVICE_NAME=officeserver.service
@@ -28,6 +28,3 @@ sudo mv $SERVICE_NAME $SERVICE_FILE
 ## Run the service 
 sudo systemctl enable $SERVICE_NAME
 sudo systemctl start $SERVICE_NAME
-
-#uvicorn sql_app.main:app --reload --host 0.0.0.0 --port 443 --ssl-certfile /home/rada/certs/ujagaga.tplinkdns.com.pem --ssl-keyfile /home/rada/certs/ujagaga.tplinkdns.com-key.pem
-

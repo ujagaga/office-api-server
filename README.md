@@ -15,11 +15,11 @@ so the authorization process is not very complex and not overly secure. To creat
 ## Authorization
 
 To use this system an application must first login using username and password. The server will respond with a token. 
-All further requests must provide this token as a http query parameter. 
+All further requests must provide this token as a http query parameter for API access or via browser cookie for the rest. 
 
 ## MQTT
 
-An MQTT server is also available on the server, so we can add custom API endpoints to interract with it.
+An MQTT server is also available on the server, so we can add custom API endpoints to interact with it.
 To install it:
 
     sudo apt install -y mosquitto
