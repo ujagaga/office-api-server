@@ -41,7 +41,7 @@ function updateSlideColor(){
 function setPreviewSize(){
 	var img = document.getElementById('video_stream');
 
-	const width  = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) - 20;
+	var width  = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) - 20;
 	const height = (window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight) - 60;
     if(width > 1280){
         width = 1280;
