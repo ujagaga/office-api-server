@@ -33,9 +33,8 @@ body{
 #video_stream{
     display: block;
     -webkit-user-select: none;
-    margin: auto;
     background-color: hsl(0, 0%, 25%);
-    margin: 60px auto;
+    margin: 50px auto;
     border: 2px solid orange;
     border-radius: 5px;
 }
