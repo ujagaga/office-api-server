@@ -1,0 +1,7 @@
+sql_app.db
+*.FCStd
+*.FCStd1
+*.idea
+__pycache__
+sql_app/__pycache__
+*runner.pid

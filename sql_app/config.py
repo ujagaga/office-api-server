@@ -1,0 +1,15 @@
+TOKEN_DURATION = 60 * 60 * 24   # 1 day
+SQLALCHEMY_DATABASE_URL = 'sqlite:///./sql_app.db'
+UNLOCK_OFFICE_URL = "http://192.168.0.151"
+UNLOCK_OFFICE_PARAMS = {"key": "St1Nidz@13"}
+MQTT_SERVER = "ujagaga.tplinkdns.com"
+MQTT_INTERCOM_TOPIC = "intercom_door"
+MQTT_OFFICE_LIGHT_TOPIC = "office_light"
+MQTT_PORT = 1883
+MQTT_USER = "ujagaga"
+MQTT_PASS = "S1mpleTh1ngsM@tter"
+USTREAMER_USER = "uStreamerUser"
+TMP_DIR = "/tmp/officeserver"
+USTREAMER_STATIC_DIR_SRC = "../tools/ustreamer_static"
+USTREAMER_STATIC_DIR_DST = "ustreamer_static"
+OFFICE_LIGHT_URL = "http://192.168.0.153"

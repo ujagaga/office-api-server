@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Server</title>
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+    <link rel="stylesheet" href="static/home.css"/>
+    <link rel="stylesheet" href="static/login.css"/>
+</head>
+<body>
+    <input type="hidden" value="{{stream_user}}" id="stream_user"/>
+    <input type="hidden" value="{{stream_pwd}}" id="stream_pwd"/>
+
+    <div class="navigation">
+        <a href="#" id="printer_url">3D Printer</a>
+        <a href="/logout">Logout</a>
+    </div>
+    <div class="container">
+        <a href="/unlock_office" class="big_button">Unlock office</a>
+        <a href="/unlock_building" class="big_button">Unlock building</a>
+        <div id="spick">
+            <h2>RGBA LED Control</h2>
+            <input type="range" min="0" max="10" class="r_slide" id="c_r">
+            <input type="range" min="0" max="10" class="g_slide" id="c_g">
+            <input type="range" min="0" max="10" class="b_slide" id="c_b">
+            <input type="range" min="0" max="10" class="a_slide" id="c_a">
+        </div>
+    </div>
+    <p id="status">{{status_msg}}</p>
+</body>
+    <script src="static/home.js"></script>
+</html>
