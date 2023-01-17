@@ -53,6 +53,8 @@ function setPreviewSize(){
 		img.style.height = height + 'px';
 		img.style.width = 'auto';
 	}
+
+	document.getElementById('container').style.width = img.style.width;
 }
 
 function getLightColor(){
