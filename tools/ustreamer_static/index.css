@@ -41,7 +41,7 @@ body{
 }
 
 .container{
-    padding: 5px;
+    padding: 0;
     display: block;
     min-width: 400px;
     margin: 50px auto;
