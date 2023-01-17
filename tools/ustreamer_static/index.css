@@ -1,33 +1,25 @@
 body{
     min-height: 100vh;
+    margin:0;
+    padding:0;
 }
-#video_stream{
-    display: block;
-    -webkit-user-select: none;
-    margin: auto;
-    background-color: hsl(0, 0%, 25%);
-    margin: 60px 4px;
-    border: 2px solid orange;
-    border-radius: 5px;
-}
-
 .navigation{
-    width: 100vw;
+    width: 100%;
     border-bottom: 1px solid black;
     background-color: #111111;
     position: fixed;
     top: 0;
     left: 0;
-    padding: 5px 0;
+    padding: 0;
+    text-align: right;
 }
 .navigation a{
-    float: right;
     width: 100px;
-    display: block;
+    display: inline-block;
     color: orange;
     background-color: #111111;
     text-align: center;
-    margin: 4px;
+    margin: 5px 5px 5px auto;
     padding: 5px;
     text-decoration: none;
     border: 2px solid orange;
@@ -38,19 +30,34 @@ body{
     color: white;
 }
 
+#video_stream{
+    display: block;
+    -webkit-user-select: none;
+    margin: auto;
+    background-color: hsl(0, 0%, 25%);
+    margin: 60px auto;
+    border: 2px solid orange;
+    border-radius: 5px;
+}
 
-.slider, .r_slide, .g_slide, .b_slide, .a_slide{
+.container{
+    padding: 5px;
+    display: block;
+    min-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+}
+.r_slide, .g_slide, .b_slide, .a_slide{
 -webkit-appearance:none;appearance:none;width:20%;height:0.8em;
 border-radius:0.4em;background:#d3d3d3;outline:none;
 -webkit-transition:.2s;margin:20px 10px;padding:0;
+min-width: 150px;
 }
-.slider::-webkit-slider-thumb{
--webkit-appearance:none;appearance:none;width:3em;height:3em;
-background:white;border-radius:50%;box-shadow:inset -1em -1em 2em rgba(0,0,0,.5);
+.r_slide, .g_slide, .b_slide{
+    width:calc(33% - 30px);
 }
-.slider::-moz-range-thumb{
-appearance:none;width:3em;height:3em;background:white;
-border-radius:50%;box-shadow: inset -1em -1em 2em rgba(0,0,0,.5);
+.a_slide{
+    width: calc(100% - 50px);
 }
 .r_slide::-webkit-slider-thumb, .g_slide::-webkit-slider-thumb, .b_slide::-webkit-slider-thumb, .a_slide::-webkit-slider-thumb{
 -webkit-appearance:none;appearance:none;width:3em;height:3em;
@@ -68,4 +75,9 @@ appearance:none;width:3em;height:3em;background:white;
 .a_slide::-moz-range-thumb{border-radius:50%;box-shadow: inset -1em -1em 2em rgba(182, 181, 184, 0.5);}
 #spick{
     width:100%;overflow: auto;
+}
+@media only screen and (max-width: 600px) {
+    .r_slide, .g_slide, .b_slide, .a_slide{
+        width:calc(100% - 30px);
+    }
 }
