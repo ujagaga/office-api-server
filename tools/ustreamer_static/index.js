@@ -91,7 +91,7 @@ function set_home_url(){
     var home_link = document.getElementById('home_url');
 
     if(window.location.hostname.endsWith(".local")){
-        home_link.href += ":8000";
+        home_link.href = window.location.protocol + "//" + window.location.hostname + ":8000";
     }
 }
 
