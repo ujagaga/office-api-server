@@ -34,8 +34,7 @@ def is_ip_local(ip_addr):
     server_ip = get_server_ip()
     ip_designator = server_ip.split(".")[-1]
     server_subnet = server_ip[:len(server_ip)-len(ip_designator)]
-    print("***** SERVER SUBNET:", server_subnet)
-    return False
+    return server_subnet in ip_addr
 
 
 def get_hashed_password(plain_text_password):

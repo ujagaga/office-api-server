@@ -5,10 +5,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from .config import UNLOCK_OFFICE_URL, UNLOCK_OFFICE_PARAMS, MQTT_INTERCOM_TOPIC, USTREAMER_USER, OFFICE_LIGHT_URL
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
-from . import crud, models, helper
+from . import crud, models, helper, config
 from .database import SessionLocal, engine
 import os
 
@@ -117,7 +116,7 @@ def api_office_light_get(token: str = "", db: Session = Depends(get_db)):
         status = "ERROR"
         detail = "Unauthorized. Please login."
     else:
-        url = OFFICE_LIGHT_URL + "/api/status"
+        url = config.OFFICE_LIGHT_URL + "/api/status"
         response = helper.http_get_query(url)
         try:
             detail = json.loads(response)
@@ -137,7 +136,7 @@ def api_office_light_set(token: str = "", db: Session = Depends(get_db), current
         status = "ERROR"
         detail = "Unauthorized. Please login."
     else:
-        url = OFFICE_LIGHT_URL + f"/api/set?CURRENT={current}"
+        url = config.OFFICE_LIGHT_URL + f"/api/set?CURRENT={current}"
         detail = helper.http_get_query(url)
         status = "OK"
 
@@ -146,14 +145,21 @@ def api_office_light_set(token: str = "", db: Session = Depends(get_db), current
 
 @app.get('/login')
 def login(request: Request, referer=None):
+    # if helper.is_ip_local(request.client.host):
+        # Local network user. Authorize.
+
     return templates.TemplateResponse("login.html", {"request": request, "referer": referer})
 
 
 @app.post('/login')
-def login(data: OAuth2PasswordRequestForm = Depends(),  db: Session = Depends(get_db), referer="/"):
+def login(request: Request, data: OAuth2PasswordRequestForm = Depends(),  db: Session = Depends(get_db), referer="/"):
     username = data.username
     password = data.password
 
+    if helper.is_ip_local(request.client.host):
+        print("**** Local user")
+    else:
+        print("**** Remote user")
     user = read_user(username=username, db=db)
     if user is not None and helper.verify_password(plain_text_password=password, hashed_password=user.hashed_password):
         access_token = helper.generate_token()
@@ -178,7 +184,7 @@ def logout(token: str | None = Cookie(default=None), db: Session = Depends(get_d
 
 @app.get("/")
 def home(request: Request, token: str | None = Cookie(default=None), db: Session = Depends(get_db), status_msg: str=""):
-    if not helper.is_ip_local(request.client.host) and not check_authorized(token=token, db=db):
+    if not check_authorized(token=token, db=db):
         return RedirectResponse(url='/login?referer=/', status_code=status.HTTP_302_FOUND)
 
     helper.stop_webcam_stream()
@@ -189,7 +195,7 @@ def home(request: Request, token: str | None = Cookie(default=None), db: Session
         status_msg = f"{status_msg}ERROR: Failed to start video streamer service. ({stream_result})"
 
     return templates.TemplateResponse("home.html", {
-        "request": request, "status_msg": status_msg, "stream_user": USTREAMER_USER, "stream_pwd": token
+        "request": request, "status_msg": status_msg, "stream_user": config.USTREAMER_USER, "stream_pwd": token
     })
 
 
@@ -198,7 +204,7 @@ def unlock_office(request: Request, token: str | None = Cookie(default=None), db
     if not check_authorized(token=token, db=db):
         return RedirectResponse(url='/login?referer=/unlock_office', status_code=status.HTTP_302_FOUND)
 
-    response = helper.http_get_query(url=UNLOCK_OFFICE_URL, params=UNLOCK_OFFICE_PARAMS)
+    response = helper.http_get_query(url=config.UNLOCK_OFFICE_URL, params=config.UNLOCK_OFFICE_PARAMS)
     return RedirectResponse(url=f'/?status_msg={response}', status_code=status.HTTP_302_FOUND)
 
 
@@ -207,6 +213,6 @@ def unlock_building(request: Request, token: str | None = Cookie(default=None), 
     if not check_authorized(token=token, db=db):
         return RedirectResponse(url='/login?referer=/unlock_building', status_code=status.HTTP_302_FOUND)
 
-    response = helper.mqtt_publish(topic=MQTT_INTERCOM_TOPIC, message="Unlock")
+    response = helper.mqtt_publish(topic=config.MQTT_INTERCOM_TOPIC, message="Unlock")
     return RedirectResponse(url=f'/?status_msg={response}', status_code=status.HTTP_302_FOUND)
 
