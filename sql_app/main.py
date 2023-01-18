@@ -178,7 +178,7 @@ def logout(token: str | None = Cookie(default=None), db: Session = Depends(get_d
 
 @app.get("/")
 def home(request: Request, token: str | None = Cookie(default=None), db: Session = Depends(get_db), status_msg: str=""):
-    if not check_authorized(token=token, db=db):
+    if not helper.is_ip_local(request.client) and not check_authorized(token=token, db=db):
         return RedirectResponse(url='/login?referer=/', status_code=status.HTTP_302_FOUND)
 
     helper.stop_webcam_stream()

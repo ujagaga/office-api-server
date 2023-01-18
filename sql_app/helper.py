@@ -8,12 +8,32 @@ from .config import MQTT_PORT, MQTT_PASS, MQTT_USER, MQTT_SERVER, USTREAMER_USER
 import subprocess
 import os
 import shutil
-
+import socket
 
 current_dir = os.path.dirname(__file__)
 ustreamer_script = os.path.join(current_dir, "..", "tools", "ustreamer.sh")
 ustreamer_static_dir_src = os.path.join(current_dir, USTREAMER_STATIC_DIR_SRC)
 ustreamer_static_dir_dst = os.path.join(TMP_DIR, USTREAMER_STATIC_DIR_DST)
+
+
+def get_server_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.254.254.254', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+
+def is_ip_local(ip_addr):
+    server_ip = get_server_ip()
+    print("***** Comparing:", type(server_ip), server_ip, type(ip_addr), ip_addr)
+    return True
 
 
 def get_hashed_password(plain_text_password):
