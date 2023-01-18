@@ -144,9 +144,14 @@ def api_office_light_set(token: str = "", db: Session = Depends(get_db), current
 
 
 @app.get('/login')
-def login(request: Request, referer=None):
-    # if helper.is_ip_local(request.client.host):
+def login(request: Request, db: Session = Depends(get_db), referer=None):
+    if helper.is_ip_local(request.client.host):
         # Local network user. Authorize.
+        access_token = helper.generate_token()
+        crud.update_user_token(db=db, username=config.LOCAL_USER_NAME, token=access_token)
+        response = RedirectResponse(url=referer, status_code=status.HTTP_302_FOUND)
+        response.set_cookie(key="token", value=access_token)
+        return response
 
     return templates.TemplateResponse("login.html", {"request": request, "referer": referer})
 
@@ -156,10 +161,9 @@ def login(request: Request, data: OAuth2PasswordRequestForm = Depends(),  db: Se
     username = data.username
     password = data.password
 
-    if helper.is_ip_local(request.client.host):
-        print("**** Local user")
-    else:
-        print("**** Remote user")
+    if not helper.is_ip_local(request.client.host) and username == config.LOCAL_USER_NAME:
+        raise HTTPException(status_code=400, detail="Local username is unacceptable for remote users.")
+
     user = read_user(username=username, db=db)
     if user is not None and helper.verify_password(plain_text_password=password, hashed_password=user.hashed_password):
         access_token = helper.generate_token()
