@@ -88,6 +88,10 @@ function getLightColor(){
     }
 }
 
+function set_home_url(){
+    console.log(window.location.hostname);
+}
+
 window.onload = function() {
     /* Extract connection parameters */
     var stream_user = document.getElementById('stream_user').value;
@@ -121,4 +125,6 @@ window.onload = function() {
     document.getElementById('video_stream').src = window.location.protocol + "//" + stream_user + ":" + stream_pass + "@" +
     window.location.hostname + ":8013/stream";
     document.getElementById('home_url').href = window.location.protocol + "//" + window.location.hostname;
+
+    set_home_url();
 }
