@@ -54,7 +54,6 @@ function setPreviewSize(){
 		img.style.width = 'auto';
 	}
 
-    console.log(img.style.width);
 	document.getElementById('container').setAttribute("style","width:" + img.clientWidth + "px");
 }
 
@@ -89,7 +88,11 @@ function getLightColor(){
 }
 
 function set_home_url(){
-    console.log(window.location.hostname);
+    var home_link = document.getElementById('home_url');
+
+    if(window.location.hostname.endsWith(".local")){
+        home_link.href += ":8000";
+    }
 }
 
 window.onload = function() {
