@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+    <link rel="stylesheet" href="static/weather.css"/>
+</head>
+<body>
+    <p id="city_name">{{city}}</p>
+    <div id="city_background"></div>
+    <div class="container">
+        <img id="weather_img" src="{{img_source}}"/>
+    </div>
+    <div id="status_background"></div>
+    <div id="status_container">
+        <p id="weather_msg">{{weather_msg}}<img src="{{icon}}"/></p>
+        <p id="temp">{{temperature}}</p>
+    </div>
+</body>
+</html>

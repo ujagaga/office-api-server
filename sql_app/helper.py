@@ -3,17 +3,25 @@ import string
 import random
 import requests
 import paho.mqtt.client as paho
-from .config import MQTT_PORT, MQTT_PASS, MQTT_USER, MQTT_SERVER, USTREAMER_USER, TMP_DIR, USTREAMER_STATIC_DIR_SRC, \
-    USTREAMER_STATIC_DIR_DST
+from . import config
 import subprocess
 import os
 import shutil
 import socket
+import json
+import translators as ts
 
 current_dir = os.path.dirname(__file__)
 ustreamer_script = os.path.join(current_dir, "..", "tools", "ustreamer.sh")
-ustreamer_static_dir_src = os.path.join(current_dir, USTREAMER_STATIC_DIR_SRC)
-ustreamer_static_dir_dst = os.path.join(TMP_DIR, USTREAMER_STATIC_DIR_DST)
+ustreamer_static_dir_src = os.path.join(current_dir, config.USTREAMER_STATIC_DIR_SRC)
+ustreamer_static_dir_dst = os.path.join(config.TMP_DIR, config.USTREAMER_STATIC_DIR_DST)
+
+
+city_ids = {
+    "NOVI SAD": "3194360",
+    "VELIKA PLANA": "784630",
+    "KIKINDA": "789518"
+}
 
 
 def get_server_ip():
@@ -57,8 +65,8 @@ def http_get_query(url: str, params: dict = {}):
 def mqtt_publish(topic: str, message: str):
     print(f'Publishing "{message}" to topic "{topic}"')
     mqtt_client = paho.Client("OfficeServer")
-    mqtt_client.username_pw_set(MQTT_USER, MQTT_PASS)
-    mqtt_client.connect(MQTT_SERVER, MQTT_PORT)
+    mqtt_client.username_pw_set(config.MQTT_USER, config.MQTT_PASS)
+    mqtt_client.connect(config.MQTT_SERVER, config.MQTT_PORT)
     status, code = mqtt_client.publish(topic, message)
 
     if status == 0:
@@ -78,7 +86,7 @@ def start_webcam_stream(password):
         content = index_file.read()
         index_file.close()
 
-        content = content.replace('{{stream_user}}', USTREAMER_USER)
+        content = content.replace('{{stream_user}}', config.USTREAMER_USER)
         content = content.replace('{{stream_pwd}}', password)
 
         index_file = open(os.path.join(ustreamer_static_dir_dst, "index.html"), "w")
@@ -88,10 +96,59 @@ def start_webcam_stream(password):
     except Exception as e:
         print("ERROR adjusting index file", e)
 
-    result = subprocess.run([ustreamer_script, ustreamer_static_dir_dst, "start", USTREAMER_USER, password])
+    result = subprocess.run([ustreamer_script, ustreamer_static_dir_dst, "start", config.USTREAMER_USER, password])
     return result.returncode
 
 
 def stop_webcam_stream():
     result = subprocess.run([ustreamer_script, ustreamer_static_dir_dst, "stop"])
     return result.returncode
+
+
+def translate_text(message, language='sr-Latn') -> str:
+    return ts.translate_text(query_text=message, translator='bing', to_language=language)
+
+
+def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
+
+    city_id = city_ids.get(city_name.upper(), config.DEFAULT_CITY)
+
+    url_params = {'key': config.WEATHER_API_KEY, 'city_id': city_id, 'lang': 'en'}
+    r = requests.get(config.WEATHER_API_URL, params=url_params)
+    status = "ERROR"
+    try:
+        if r.status_code == 200:
+            json_ret_val = json.loads(r.text)
+            data = json_ret_val['data'][0]
+            temp = data['temp']
+            weather = data['weather']
+            description = translate_text(weather['description'])
+            weather_code = weather['code']
+            icon_url = f"{config.WEATHER_ICON_URL}/{weather['icon']}.png"
+            temp_str = f"{temp}".replace('.', ',')
+            status = "OK"
+
+            detail = {
+                "city": data["city_name"],
+                "weather": description,
+                "temp": temp_str,
+                "wind_spd": data["wind_spd"],
+                "temp_feel": data["app_temp"],
+                "cloud_coverage": data["clouds"],
+                "part_of_day": data["pod"],
+                "time": data["ob_time"],
+                "weather_code": weather_code,
+                "weather_icon": icon_url
+            }
+
+        else:
+            status_code = r.status_code
+            status_msg = r.text
+            if status_code == 429:
+                status_msg = "Dnevna granica dostignuta. Pokušajte sutra."
+            detail = {"code": status_code, "message": status_msg}
+    except Exception as e:
+        detail = {"code": "", "message": f"{e}"}
+
+    return {"status": status, "detail": detail}
+

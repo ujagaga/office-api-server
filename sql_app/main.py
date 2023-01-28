@@ -1,4 +1,5 @@
 import json
+import time
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status, Cookie
 from fastapi.security import OAuth2PasswordRequestForm
@@ -57,6 +58,20 @@ def invalidate_auth(token: str, db: Session):
     db_user = crud.get_user_by_token(db, token=token)
     if db_user:
         crud.update_user_token(db=db, username=db_user.username, token="")
+
+
+def read_general_data(data_key: str, db: Session):
+    data = crud.get_general_data(db, data_key=data_key)
+    try:
+        data_value = json.loads(data.data_value)
+    except:
+        data_value = data.data_value
+
+    return {"value": data_value, "timestamp": data.timestamp}
+
+
+def update_general_data(data_key: str, data_value: str, db: Session):
+    crud.set_general_data(data_key=data_key, data_value=data_value, db=db)
 
 
 @app.get('/api')
@@ -220,3 +235,51 @@ def unlock_building(request: Request, token: str | None = Cookie(default=None), 
     response = helper.mqtt_publish(topic=config.MQTT_INTERCOM_TOPIC, message="Unlock")
     return RedirectResponse(url=f'/?status_msg={response}', status_code=status.HTTP_302_FOUND)
 
+
+@app.get("/weather")
+def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(get_db)):
+    city = location
+    img_source = "blank.png"
+    weather_msg = "Greska u prikupljanju podataka"
+    temperature = ""
+    icon = ''
+
+    db_weather_data = read_general_data(data_key="weather", db=db)
+
+    proceed = True
+    if db_weather_data is not None:
+        if time.time() - db_weather_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
+            proceed = False
+        else:
+            status = db_weather_data["value"]["status"]
+            if "ERR" in status:
+                proceed = False
+
+    if proceed:
+        weather = helper.get_current_weather(city_name=location)
+        update_general_data(data_key="weather", data_value=json.dumps(weather), db=db)
+    else:
+        weather = db_weather_data["value"]
+
+    weather_status = weather.get("status", "ERR")
+    if "OK" in weather_status:
+        # weather["timestamp"] = int(time.time())
+        # update_general_data(data_key="weather", data_value=weather)
+        try:
+            data = weather["detail"]
+            print(data)
+            city = data["city"]
+            weather_msg = data["weather"]
+            temperature = f"Temp: {data['temp']}{chr(176)}C, Osećaj: {data['temp_feel']}{chr(176)}C"
+            icon = data["weather_icon"]
+
+        except Exception as e:
+            print(f"ERROR parsing weather data: {e}", flush=True)
+    else:
+        print(f"ERROR reading weather data: {weather}")
+        weather_msg = weather["detail"]["message"]
+
+    return templates.TemplateResponse("weather.html", {
+        "request": request, "img_source": img_source, "city": city, "weather_msg": weather_msg,
+        "temperature": temperature, "icon": icon,
+    })

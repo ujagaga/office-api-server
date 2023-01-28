@@ -19,3 +19,21 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class GeneralDataBase(BaseModel):
+    data_key: str
+
+
+class GeneralDataCreate(GeneralDataBase):
+    data_value: str
+
+
+class GeneralData(GeneralDataBase):
+    id: int
+    data_key: str
+    data_value: str
+    timestamp: int
+
+    class Config:
+        orm_mode = True

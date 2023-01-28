@@ -13,3 +13,12 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     token = Column(Integer, default=0)
     token_expire_time = Column(Integer, default=0)
+
+
+class GeneralData(Base):
+    __tablename__ = 'general'
+
+    id = Column(Integer, primary_key=True, index=True)
+    data_key = Column(String, unique=True)
+    data_value = Column(String)
+    timestamp = Column(Integer, default=0)
