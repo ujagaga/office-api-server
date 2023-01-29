@@ -124,7 +124,6 @@ def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
             weather = data['weather']
             description = translate_text(weather['description'])
             weather_code = weather['code']
-            icon_url = f"{config.WEATHER_ICON_URL}/{weather['icon']}.png"
             temp_str = f"{temp}".replace('.', ',')
             status = "OK"
 
@@ -138,7 +137,7 @@ def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
                 "part_of_day": data["pod"],
                 "time": data["ob_time"],
                 "weather_code": weather_code,
-                "weather_icon": icon_url
+                "weather_icon": weather['icon']
             }
 
         else:

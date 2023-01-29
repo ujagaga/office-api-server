@@ -1,64 +1,85 @@
 body{
+    display: block;
     padding: 0;
     margin: 0;
-    font-size: 20px;
-    line-height: 1.1;
+    font-size: 2.5vh;
     color: white;
 }
-.container{
+
+#headline_container, #status_container{
+    position: fixed;
+    left: 0;
+    width: 100vw;
+    margin: 0;
     padding: 0;
+    overflow: hidden;
     display: block;
-    width: 100%;
-    margin: 0;
+    z-index: 5;
     text-align: center;
 }
-#weather_img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    margin: 0;
-    padding: 0;
-}
-#city_name, #city_background{
-    position: fixed;
-    left: 0;
+#headline_container{
     top: 0;
-    width: 100%;
-    height: 2em;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-#city_background, #status_background{
-    background-color: black;
-    opacity: 0.5;
-}
-#city_name{
-    font-size: 1.5em;
-    font-weight: 800;
-    text-align: center;
-    z-index: 10;
-}
-#status_background, #status_container{
-    width: 100%;
-    height: 25%;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
+    height: 4vh;
 }
 #status_container{
-    z-index: 10;
+    bottom: 0;
+    height: 25vh;
+}
+#status_container p{
+    margin: 5px;
+}
+
+#headline_container p{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     text-align: center;
+    font-size: 3vh;
+    margin: 0.5vh;
 }
-#weather_msg {
 
-    margin: 0 1em;
-
-}
-#weather_msg img{
+.transparent_back{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    width: auto;
+    background-color: black;
+    opacity: 0.5;
+    z-index: -1;
+}
+
+#video_container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+#weather_video{
+    height: 100%;
+    width: 177.77777778vh;
+    min-width: 100%;
+    min-height: 56.25vw;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#weather_msg{
+    padding: 0;
+    display: inline-block;
+    width: 100%;
+    line-height: 1em;
+    margin-top: 1.5em !important;
+}
+
+#weather_msg img{
+    height: 3em;
+    float: right;
+    margin: -1.5em 1em -1em 0;
 }

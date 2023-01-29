@@ -239,10 +239,10 @@ def unlock_building(request: Request, token: str | None = Cookie(default=None), 
 @app.get("/weather")
 def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(get_db)):
     city = location
-    img_source = "blank.png"
     weather_msg = "Greska u prikupljanju podataka"
     temperature = ""
-    icon = ''
+    icon = ""
+    icon_location = config.WEATHER_ICON_URL
 
     db_weather_data = read_general_data(data_key="weather", db=db)
 
@@ -263,8 +263,6 @@ def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(
 
     weather_status = weather.get("status", "ERR")
     if "OK" in weather_status:
-        # weather["timestamp"] = int(time.time())
-        # update_general_data(data_key="weather", data_value=weather)
         try:
             data = weather["detail"]
             print(data)
@@ -279,7 +277,14 @@ def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(
         print(f"ERROR reading weather data: {weather}")
         weather_msg = weather["detail"]["message"]
 
+    temperature = f"Temp: 0{chr(176)}C, Osećaj: 0{chr(176)}C"
+    icon = "s01d"
+
     return templates.TemplateResponse("weather.html", {
-        "request": request, "img_source": img_source, "city": city, "weather_msg": weather_msg,
-        "temperature": temperature, "icon": icon,
+        "request": request,
+        "city": city,
+        "weather_msg": weather_msg,
+        "temperature": temperature,
+        "icon": icon,
+        "icon_location": icon_location
     })

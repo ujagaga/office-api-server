@@ -8,15 +8,22 @@
     <link rel="stylesheet" href="static/weather.css"/>
 </head>
 <body>
-    <p id="city_name">{{city}}</p>
-    <div id="city_background"></div>
-    <div class="container">
-        <img id="weather_img" src="{{img_source}}"/>
+    <div id="headline_container">
+        <div class="transparent_back"></div>
+        <p>{{city}}</p>
     </div>
-    <div id="status_background"></div>
+
+    <div id="video_container">
+        <video id="weather_video" autoplay muted loop>
+            <source src="static/videos/{{icon}}.mp4" type="video/mp4">
+        </video>
+    </div>
+
     <div id="status_container">
-        <p id="weather_msg">{{weather_msg}}<img src="{{icon}}"/></p>
+        <div class="transparent_back"></div>
+        <p id="weather_msg">{{weather_msg}}<img src="{{icon_location}}/{{icon}}.png"/></p>
         <p id="temp">{{temperature}}</p>
     </div>
 </body>
+<script src="static/weather.js"></script>
 </html>
