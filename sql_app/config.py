@@ -19,3 +19,4 @@ WEATHER_API_URL = "http://api.weatherbit.io/v2.0/current"
 WEATHER_ICON_URL = "https://www.weatherbit.io/static/img/icons"
 DEFAULT_CITY = "NOVI SAD"
 WEATHER_NOT_READABLE_SECONDS = (60 * 30)
+WEATHER_FORCAST_API_URL = "https://api.weatherbit.io/v2.0/forecast/daily"

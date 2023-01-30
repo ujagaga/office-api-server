@@ -62,12 +62,15 @@ def invalidate_auth(token: str, db: Session):
 
 def read_general_data(data_key: str, db: Session):
     data = crud.get_general_data(db, data_key=data_key)
-    try:
-        data_value = json.loads(data.data_value)
-    except:
-        data_value = data.data_value
+    if data is not None:
+        try:
+            data_value = json.loads(data.data_value)
+        except:
+            data_value = data.data_value
 
-    return {"value": data_value, "timestamp": data.timestamp}
+        return {"value": data_value, "timestamp": data.timestamp}
+    else:
+        return None
 
 
 def update_general_data(data_key: str, data_value: str, db: Session):
@@ -238,34 +241,34 @@ def unlock_building(request: Request, token: str | None = Cookie(default=None), 
 
 @app.get("/weather")
 def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(get_db)):
+    # Current weather report
     city = location
     weather_msg = "Greska u prikupljanju podataka"
     temperature = ""
     icon = ""
     icon_location = config.WEATHER_ICON_URL
 
-    db_weather_data = read_general_data(data_key="weather", db=db)
+    db_current_weather_data = read_general_data(data_key="current_weather", db=db)
 
     proceed = True
-    if db_weather_data is not None:
-        if time.time() - db_weather_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
+    if db_current_weather_data is not None:
+        if time.time() - db_current_weather_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
             proceed = False
         else:
-            status = db_weather_data["value"]["status"]
+            status = db_current_weather_data["value"]["status"]
             if "ERR" in status:
                 proceed = False
 
     if proceed:
         weather = helper.get_current_weather(city_name=location)
-        update_general_data(data_key="weather", data_value=json.dumps(weather), db=db)
+        update_general_data(data_key="current_weather", data_value=json.dumps(weather), db=db)
     else:
-        weather = db_weather_data["value"]
+        weather = db_current_weather_data["value"]
 
-    weather_status = weather.get("status", "ERR")
-    if "OK" in weather_status:
+    current_weather_status = weather.get("status", "ERR")
+    if "OK" in current_weather_status:
         try:
             data = weather["detail"]
-            print(data)
             city = data["city"]
             weather_msg = data["weather"]
             temperature = f"Temp: {data['temp']}{chr(176)}C, Osećaj: {data['temp_feel']}{chr(176)}C"
@@ -277,8 +280,31 @@ def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(
         print(f"ERROR reading weather data: {weather}")
         weather_msg = weather["detail"]["message"]
 
-    temperature = f"Temp: 0{chr(176)}C, Osećaj: 0{chr(176)}C"
-    icon = "s01d"
+    # Weather forcast
+    db_weather_forcast_data = read_general_data(data_key="future_weather", db=db)
+    proceed = True
+    if db_weather_forcast_data is not None:
+        if time.time() - db_weather_forcast_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
+            proceed = False
+        else:
+            status = db_weather_forcast_data["value"]["status"]
+            if "ERR" in status:
+                proceed = False
+
+    if proceed:
+        weather_forcast = helper.get_weather_forcast(city_name=location)
+        update_general_data(data_key="future_weather", data_value=json.dumps(weather_forcast), db=db)
+    else:
+        weather_forcast = db_weather_forcast_data["value"]
+
+    forcast_weather_status = weather_forcast.get("status", "ERR")
+    if "OK" in forcast_weather_status:
+        forcast_data = weather_forcast["detail"]
+        weather_forcast_msg = None
+    else:
+        print(f"ERROR reading weather forcast: {weather}")
+        weather_forcast_msg = weather_forcast["detail"]["message"]
+        forcast_data = None
 
     return templates.TemplateResponse("weather.html", {
         "request": request,
@@ -286,5 +312,7 @@ def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(
         "weather_msg": weather_msg,
         "temperature": temperature,
         "icon": icon,
-        "icon_location": icon_location
+        "icon_location": icon_location,
+        "weather_forcast_msg": weather_forcast_msg,
+        "forcast_data": forcast_data
     })

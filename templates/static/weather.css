@@ -2,8 +2,17 @@ body{
     display: block;
     padding: 0;
     margin: 0;
-    font-size: 2.5vh;
+    font-size: 2vh;
     color: white;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+  width: 0;
+  border: none;
+  margin: 0;
 }
 
 #headline_container, #status_container{
@@ -23,10 +32,11 @@ body{
 }
 #status_container{
     bottom: 0;
-    height: 25vh;
+    height: 13vh;
 }
 #status_container p{
-    margin: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 #headline_container p{
@@ -75,11 +85,68 @@ body{
     display: inline-block;
     width: 100%;
     line-height: 1em;
-    margin-top: 1.5em !important;
+    margin-top: 0.5em !important;
 }
 
 #weather_msg img{
     height: 3em;
     float: right;
-    margin: -1.5em 1em -1em 0;
+    margin: -0.5em 1em -1.5em 0;
+}
+
+.forcast{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex
+    justify-content: space-between;
+}
+.daily_forcast{
+    padding: 0;
+    margin: auto;
+    float: left;
+    width: calc(25% - 2px);
+    max-width: calc(25% - 2px);
+    overflow: hidden;
+}
+.daily_forcast:nth-child(1), .daily_forcast:nth-child(2), .daily_forcast:nth-child(3){
+    border-right: 1px solid black;
+}
+.daily_forcast p{
+    width: calc(100% - 4px);
+    padding: 2px;
+    line-height: 1em;
+    margin: 0;
+    height: 1em;
+}
+.small{
+    font-size: 0.7em;
+    margin-top: 0.1em;
+    display: inline-block;
+}
+.left-aligned{
+    float: left;
+}
+.right-aligned{
+    float: right;
+    margin-right: 2px;
+}
+.small_icon{
+    height: 1.1em;
+    width: auto;
+}
+.daily_forcast p img{
+    height: 1.6em;
+    float: right;
+    margin: -0.3em 1em -0.3em 0;
+}
+.bottom-border{
+    border-bottom: 1px solid black;
+}
+.forcast_date{
+    font-size: 0.8em;
+    font-weight: 800;
+    padding: 0  !important;
+    margin: 0  !important;
+    line-height: 0.8em !important;
 }

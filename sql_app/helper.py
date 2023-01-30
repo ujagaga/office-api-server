@@ -10,6 +10,8 @@ import shutil
 import socket
 import json
 import translators as ts
+import datetime
+
 
 current_dir = os.path.dirname(__file__)
 ustreamer_script = os.path.join(current_dir, "..", "tools", "ustreamer.sh")
@@ -109,8 +111,49 @@ def translate_text(message, language='sr-Latn') -> str:
     return ts.translate_text(query_text=message, translator='bing', to_language=language)
 
 
-def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
+def get_weather_forcast(city_name: str = config.DEFAULT_CITY, max_days: int = 3) -> dict:
+    city_id = city_ids.get(city_name.upper(), config.DEFAULT_CITY)
 
+    url_params = {'key': config.WEATHER_API_KEY, 'city_id': city_id, 'lang': 'en'}
+    r = requests.get(config.WEATHER_FORCAST_API_URL, params=url_params)
+    status = "ERROR"
+
+    try:
+        if r.status_code == 200:
+            json_ret_val = json.loads(r.text)
+            detail = []
+            for item in json_ret_val['data']:
+                item_date = datetime.datetime.strptime(item["valid_date"], '%Y-%m-%d')
+                days_ahead = (item_date - datetime.datetime.now()).days
+
+                if days_ahead < max_days:
+                    item_data = {
+                        "date": item_date.strftime("%d.%m."),
+                        "avg_temp": item["temp"],
+                        "max_temp": item["high_temp"],
+                        "min_temp": item["low_temp"],
+                        "app_min_temp": item["app_min_temp"],
+                        "app_max_temp": item["app_max_temp"],
+                        "icon": item["weather"]["icon"],
+                        "probabillity": item["pop"]
+                    }
+                    detail.append(item_data)
+
+            status = "OK"
+
+        else:
+            status_code = r.status_code
+            status_msg = r.text
+            if status_code == 429:
+                status_msg = "Dnevna granica dostignuta. Pokušajte sutra."
+            detail = {"code": status_code, "message": status_msg}
+    except Exception as e:
+        detail = {"code": "", "message": f"{e}"}
+
+    return {"status": status, "detail": detail}
+
+
+def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
     city_id = city_ids.get(city_name.upper(), config.DEFAULT_CITY)
 
     url_params = {'key': config.WEATHER_API_KEY, 'city_id': city_id, 'lang': 'en'}
