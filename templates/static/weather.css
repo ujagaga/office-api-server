@@ -32,7 +32,7 @@ body{
 }
 #status_container{
     bottom: 0;
-    height: 13vh;
+    height: 15vh;
 }
 #status_container p{
     margin-top: 2px;
