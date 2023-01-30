@@ -32,7 +32,6 @@ body{
 }
 #status_container{
     bottom: 0;
-    height: 15vh;
 }
 #status_container p{
     margin-top: 2px;
@@ -102,7 +101,7 @@ body{
     justify-content: space-between;
 }
 .daily_forcast{
-    padding: 0;
+    padding: 0 0 20px 0;
     margin: auto;
     float: left;
     width: calc(25% - 2px);
