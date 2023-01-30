@@ -129,7 +129,6 @@ body{
 }
 .right-aligned{
     float: right;
-    margin-right: 2px;
 }
 .small_icon{
     height: 1.1em;
