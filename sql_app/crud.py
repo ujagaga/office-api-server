@@ -23,7 +23,7 @@ def create_local_user(db: Session):
 def update_user_token(db: Session, username: str, token: str):
     user = db.query(models.User).filter(models.User.username == username).first()
     if username == config.LOCAL_USER_NAME and user is None:
-        user = create_local_user()
+        user = create_local_user(db=db)
     user.token = token
     user.token_expire_time = time.time() + config.TOKEN_DURATION
     db.commit()
