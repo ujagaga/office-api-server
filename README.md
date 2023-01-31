@@ -5,18 +5,11 @@ so the authorization process is not very complex and not overly secure. To creat
     tools/edit_user.py -h
 
 
-## Installing
+## Installing dependencies
 
     sudo apt install -y uvicorn python3-pip ustreamer
     pip3 install fastapi python-multipart requests sqlalchemy jinja2 paho-mqtt
     
-To support translators for the weather page, install rust and python translators
-
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-    sudo apt install -y python3-dev ustreamer libxml2-dev libxslt-dev libffi-dev
-    pip3 install translators
-
-
 Run the server
 
     uvicorn sql_app.main:app --reload --host 0.0.0.0

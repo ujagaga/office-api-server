@@ -9,15 +9,13 @@ import os
 import shutil
 import socket
 import json
-import translators as ts
 import datetime
-
+import sys
 
 current_dir = os.path.dirname(__file__)
 ustreamer_script = os.path.join(current_dir, "..", "tools", "ustreamer.sh")
 ustreamer_static_dir_src = os.path.join(current_dir, config.USTREAMER_STATIC_DIR_SRC)
 ustreamer_static_dir_dst = os.path.join(config.TMP_DIR, config.USTREAMER_STATIC_DIR_DST)
-
 
 city_ids = {
     "NOVI SAD": "3194360",
@@ -107,10 +105,6 @@ def stop_webcam_stream():
     return result.returncode
 
 
-def translate_text(message, language='sr-Latn') -> str:
-    return ts.translate_text(query_text=message, translator='bing', to_language=language)
-
-
 def get_weather_forcast(city_name: str = config.DEFAULT_CITY, max_days: int = 3) -> dict:
     city_id = city_ids.get(city_name.upper(), config.DEFAULT_CITY)
 
@@ -165,7 +159,7 @@ def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
             data = json_ret_val['data'][0]
             temp = data['temp']
             weather = data['weather']
-            description = translate_text(weather['description'])
+            description = config.WEATHER_CODES.get(weather['code'], weather['description'])
             weather_code = weather['code']
             temp_str = f"{temp}".replace('.', ',')
             status = "OK"
@@ -190,7 +184,8 @@ def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
                 status_msg = "Dnevna granica dostignuta. Pokušajte sutra."
             detail = {"code": status_code, "message": status_msg}
     except Exception as e:
-        detail = {"code": "", "message": f"{e}"}
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        detail = {"code": "", "message": f"{e}. LINE:{exc_tb.tb_lineno}"}
 
     return {"status": status, "detail": detail}
 

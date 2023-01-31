@@ -3,11 +3,6 @@
 sudo apt install -y uvicorn python3-pip ustreamer
 pip3 install fastapi python-multipart requests sqlalchemy jinja2 paho-mqtt
 
-# To support translators for the weather page, install rust and python translators
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-sudo apt install -y python3-dev ustreamer libxml2-dev libxslt-dev libffi-dev
-pip3 install translators
-
 SERVICE_NAME=officeserver.service
 SERVICE_FILE=/etc/systemd/system/$SERVICE_NAME
 
