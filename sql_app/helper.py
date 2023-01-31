@@ -106,7 +106,7 @@ def stop_webcam_stream():
 
 
 def get_weather_forcast(city_name: str = config.DEFAULT_CITY, max_days: int = 3) -> dict:
-    city_id = city_ids.get(city_name.upper(), config.DEFAULT_CITY)
+    city_id = city_ids.get(city_name.upper(), "3194360")
 
     url_params = {'key': config.WEATHER_API_KEY, 'city_id': city_id, 'lang': 'en'}
     r = requests.get(config.WEATHER_FORCAST_API_URL, params=url_params)
@@ -148,7 +148,7 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY, max_days: int = 3)
 
 
 def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
-    city_id = city_ids.get(city_name.upper(), config.DEFAULT_CITY)
+    city_id = city_ids.get(city_name.upper(), "3194360")
 
     url_params = {'key': config.WEATHER_API_KEY, 'city_id': city_id, 'lang': 'en'}
     r = requests.get(config.WEATHER_API_URL, params=url_params)
