@@ -69,10 +69,10 @@ body{
 }
 
 #weather_video{
-    height: 100%;
-    width: 177.77777778vh;
-    min-width: 100%;
-    min-height: 56.25vw;
+    height: auto;
+    width: auto;
+    min-width: 100vw;
+    min-height: 100vh;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -147,4 +147,24 @@ body{
     padding: 0  !important;
     margin: 0  !important;
     line-height: 0.8em !important;
+}
+.light-on-off{
+    display: block;
+    width: 4em;
+    height: 4em;
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 9em;
+    left: 1em;
+    z-index: 13;
+}
+.light-on-off:after{
+    content: "";
+    width: 0;
+    height: 1em;
+    position: absolute;
+    border: 2px solid white;
+    margin-left: calc(2em - 1px);
 }

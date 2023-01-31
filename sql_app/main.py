@@ -239,8 +239,20 @@ def unlock_building(request: Request, token: str | None = Cookie(default=None), 
     return RedirectResponse(url=f'/?status_msg={response}', status_code=status.HTTP_302_FOUND)
 
 
+@app.get("/toggle_light")
+def toggle_light(request: Request, token: str | None = Cookie(default=None), db: Session = Depends(get_db)):
+    if not check_authorized(token=token, db=db):
+        return RedirectResponse(url='/login?referer=/toggle_light', status_code=status.HTTP_302_FOUND)
+
+    helper.mqtt_publish(topic=config.MQTT_BAR_LIGHT_TOPIC, message="toggle")
+    return RedirectResponse(url=f'/weather', status_code=status.HTTP_302_FOUND)
+
+
 @app.get("/weather")
-def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(get_db)):
+def weather(request: Request, token: str | None = Cookie(default=None), db: Session = Depends(get_db), status_msg: str = "", location: str = "Novi Sad"):
+    if not check_authorized(token=token, db=db):
+        return RedirectResponse(url='/login?referer=/weather', status_code=status.HTTP_302_FOUND)
+# def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(get_db)):
     # Current weather report
     city = location
     weather_msg = "Greska u prikupljanju podataka"
@@ -255,8 +267,8 @@ def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(
         if time.time() - db_current_weather_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
             proceed = False
         else:
-            status = db_current_weather_data["value"]["status"]
-            if "ERR" in status:
+            data_status = db_current_weather_data["value"]["status"]
+            if "ERR" in data_status:
                 proceed = False
 
     if proceed:
@@ -287,8 +299,8 @@ def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(
         if time.time() - db_weather_forcast_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
             proceed = False
         else:
-            status = db_weather_forcast_data["value"]["status"]
-            if "ERR" in status:
+            data_status = db_weather_forcast_data["value"]["status"]
+            if "ERR" in data_status:
                 proceed = False
 
     if proceed:
