@@ -259,6 +259,7 @@ def weather(request: Request, token: str | None = Cookie(default=None), db: Sess
     temperature = ""
     icon = ""
     icon_location = config.WEATHER_ICON_URL
+    display_temp = ""
 
     db_current_weather_data = read_general_data(data_key="current_weather", db=db)
 
