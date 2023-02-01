@@ -283,7 +283,8 @@ def weather(request: Request, token: str | None = Cookie(default=None), db: Sess
             data = weather["detail"]
             city = data["city"]
             weather_msg = data["weather"]
-            temperature = f"Temp: {data['temp']}{chr(176)}C, Osećaj: {data['temp_feel']}{chr(176)}C"
+            temperature = f"Osećaj: {data['temp_feel']}{chr(176)}C"
+            display_temp = data['temp']
             icon = data["weather_icon"]
 
         except Exception as e:
@@ -323,6 +324,7 @@ def weather(request: Request, token: str | None = Cookie(default=None), db: Sess
         "city": city,
         "weather_msg": weather_msg,
         "temperature": temperature,
+        "display_temp": display_temp,
         "icon": icon,
         "icon_location": icon_location,
         "weather_forcast_msg": weather_forcast_msg,
