@@ -25,13 +25,15 @@
         <p id="weather_msg">{{weather_msg}}<img src="{{icon_location}}/{{icon}}.png"/></p>
         <p class="bottom-border">{{temperature}}</p>
         <div class="forcast clearfix">
-        {% for item in forcast_data %}
+            {% if forcast_data %}
+            {% for item in forcast_data %}
             <div class="daily_forcast">
                 <p class="forcast_date">{{item.date}}</p>
                 <p><span class="small left-aligned">{{item.min_temp}}&#8451;</span> {{item.avg_temp}}&#8451; <span class="small right-aligned">{{item.max_temp}}&#8451;</span></p>
                 <p>{{item.probabillity}}%<img class="small_icon" src="{{icon_location}}/{{item.icon}}.png"/></p>
             </div>
-        {% endfor %}
+            {% endfor %}
+            {% endif %}
         </div>
     </div>
 </body>
