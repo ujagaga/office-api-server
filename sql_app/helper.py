@@ -9,8 +9,8 @@ import os
 import shutil
 import socket
 import json
-import datetime
-import sys
+from datetime import datetime, timedelta
+import urllib.parse
 
 current_dir = os.path.dirname(__file__)
 ustreamer_script = os.path.join(current_dir, "..", "tools", "ustreamer.sh")
@@ -105,87 +105,118 @@ def stop_webcam_stream():
     return result.returncode
 
 
-def get_weather_forcast(city_name: str = config.DEFAULT_CITY, max_days: int = 3) -> dict:
-    city_id = city_ids.get(city_name.upper(), "3194360")
+def get_weather_status(status_code, lang=config.DEFAULT_LANG):
+    data = config.WEATHER_CODES.get(status_code, None)
+    if data is None:
+        return "ERR: No such weather code."
+    else:
+        return data.get(lang, "ERR: No description available.")
 
-    url_params = {'key': config.WEATHER_API_KEY, 'city_id': city_id, 'lang': 'en'}
-    r = requests.get(config.WEATHER_FORCAST_API_URL, params=url_params)
+
+def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
+    if city_name not in config.LOCATIONS.keys():
+        city_name = config.DEFAULT_CITY
+    city = config.LOCATIONS.get(city_name)
+    if city is None:
+        return {"status": "ERROR", "detail": "No valid city specified"}
+
+    url_params = config.DEFAULT_PARMS
+    url_params["latitude"] = city["latitude"]
+    url_params["longitude"] = city["longitude"]
+
+    payload_str = urllib.parse.urlencode(url_params, safe=',')
+    r = requests.get(config.WEATHER_API_URL, params=payload_str)
     status = "ERROR"
 
     try:
         if r.status_code == 200:
             json_ret_val = json.loads(r.text)
-            detail = []
-            for item in json_ret_val['data']:
-                item_date = datetime.datetime.strptime(item["valid_date"], '%Y-%m-%d')
-                days_ahead = (item_date - datetime.datetime.now()).days
 
-                if days_ahead < max_days:
-                    item_data = {
-                        "date": item_date.strftime("%d.%m."),
-                        "avg_temp": item["temp"],
-                        "max_temp": item["high_temp"],
-                        "min_temp": item["low_temp"],
-                        "app_min_temp": item["app_min_temp"],
-                        "app_max_temp": item["app_max_temp"],
-                        "icon": item["weather"]["icon"],
-                        "probabillity": item["pop"]
+            hourly_data = json_ret_val["hourly"]
+            daily_data = json_ret_val["daily"]
+
+            now = datetime.now()
+            today_info = None
+
+            forcast_data = []
+
+            for i in range(0, len(daily_data["time"])):
+                item_date = datetime.strptime(daily_data["time"][i], '%Y-%m-%d')
+                weather_code = daily_data["weathercode"][i]
+                temp_min = daily_data["temperature_2m_min"][i]
+                temp_max = daily_data["temperature_2m_max"][i]
+
+                icon_name = None
+                description = config.WEATHER_CODES.get(weather_code, None)
+
+                if item_date.date() == datetime.now().date():
+                    day_name = config.WEEK_DAYS[item_date.weekday()]
+
+                    today_info = {
+                        "day": day_name,
+                        "temp_min": temp_min,
+                        "temp_max": temp_max,
+                        "sunrise": daily_data["sunrise"][i],
+                        "sunset": daily_data["sunset"][i],
                     }
-                    detail.append(item_data)
+                else:
+                    if description is not None:
+                        icon_name = f"{description['icon']}d"
+
+                    forcast_data.append({
+                        "day": item_date.weekday(),
+                        "date": f"{ item_date.day }.{ item_date.month }",
+                        "temp_min": temp_min,
+                        "temp_max": temp_max,
+                        "icon": icon_name
+                    })
+
+            today_data = []
+
+            start_time = now - timedelta(hours=1)
+            end_time = start_time + timedelta(hours=config.TODAY_MAX_HOURS)
+
+            for i in range(0, len(hourly_data["time"])):
+                temperature = hourly_data["temperature_2m"][i]
+                weather_code = hourly_data["weathercode"][i]
+                precipitation = hourly_data["precipitation"][i]
+
+                item_time = datetime.strptime(hourly_data["time"][i], '%Y-%m-%dT%H:%M')
+                if start_time <= item_time <= end_time:
+                    icon_name = None
+                    description = config.WEATHER_CODES.get(weather_code, None)
+                    today_info_set_flag = False
+                    if description is not None and today_info is not None:
+                        sunrise = datetime.strptime(today_info["sunrise"], '%Y-%m-%dT%H:%M')
+                        sunset = datetime.strptime(today_info["sunset"], '%Y-%m-%dT%H:%M')
+
+                        if sunrise.time() < item_time.time() < sunset.time():
+                            icon_name = f"{description['icon']}d"
+                        else:
+                            icon_name = f"{description['icon']}n"
+
+                        if item_time.replace(minute=0) <= now < (item_time.replace(minute=0) + timedelta(hours=1)):
+                            today_info["description"] = description
+                            today_info["icon_name"] = icon_name
+                            today_info["temp"] = temperature
+                            today_info_set_flag = True
+
+                    if not today_info_set_flag:
+                        today_data.append({
+                            "hour": item_time.hour,
+                            "temp": temperature,
+                            "icon": icon_name,
+                            "prec": precipitation
+                        })
+
+            detail = {"city_name": city_name, "today_info": today_info, "hourly": today_data, "daily": forcast_data}
 
             status = "OK"
 
         else:
-            status_code = r.status_code
-            status_msg = r.text
-            if status_code == 429:
-                status_msg = "Dnevna granica dostignuta. Pokušajte sutra."
-            detail = {"code": status_code, "message": status_msg}
-    except Exception as e:
-        detail = {"code": "", "message": f"{e}"}
-
-    return {"status": status, "detail": detail}
-
-
-def get_current_weather(city_name: str = config.DEFAULT_CITY) -> dict:
-    city_id = city_ids.get(city_name.upper(), "3194360")
-
-    url_params = {'key': config.WEATHER_API_KEY, 'city_id': city_id, 'lang': 'en'}
-    r = requests.get(config.WEATHER_API_URL, params=url_params)
-    status = "ERROR"
-    try:
-        if r.status_code == 200:
             json_ret_val = json.loads(r.text)
-            data = json_ret_val['data'][0]
-            temp = data['temp']
-            weather = data['weather']
-            description = config.WEATHER_CODES.get(weather['code'], weather['description'])
-            weather_code = weather['code']
-            temp_str = f"{temp}".replace('.', ',')
-            status = "OK"
-
-            detail = {
-                "city": data["city_name"],
-                "weather": description,
-                "temp": temp_str,
-                "wind_spd": data["wind_spd"],
-                "temp_feel": data["app_temp"],
-                "cloud_coverage": data["clouds"],
-                "part_of_day": data["pod"],
-                "time": data["ob_time"],
-                "weather_code": weather_code,
-                "weather_icon": weather['icon']
-            }
-
-        else:
-            status_code = r.status_code
-            status_msg = r.text
-            if status_code == 429:
-                status_msg = "Dnevna granica dostignuta. Pokušajte sutra."
-            detail = {"code": status_code, "message": status_msg}
+            detail = {"code": r.status_code, "message": json_ret_val["reason"]}
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        detail = {"code": "", "message": f"{e}. LINE:{exc_tb.tb_lineno}"}
+        detail = {"code": "", "message": f"ERROR: {e}"}
 
     return {"status": status, "detail": detail}
-

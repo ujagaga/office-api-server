@@ -15,49 +15,65 @@ USTREAMER_STATIC_DIR_SRC = "../tools/ustreamer_static"
 USTREAMER_STATIC_DIR_DST = "ustreamer_static"
 OFFICE_LIGHT_URL = "http://192.168.0.153"
 LOCAL_USER_NAME = "local"
-# WEATHER_API_KEY = "6b15e16bb3dc4ba1b063d0836d56ce44"  # Ujagaga
-WEATHER_API_KEY = "64121400eed94529850312e30deaa703"    # Ohanahome
-WEATHER_API_URL = "http://api.weatherbit.io/v2.0/current"
-WEATHER_ICON_URL = "https://www.weatherbit.io/static/img/icons"
-DEFAULT_CITY = "NOVI SAD"
+
+WEATHER_API_URL = "https://api.open-meteo.com/v1/forecast"
+LOCATIONS = {
+    "Novi Sad": {"latitude": "45.26", "longitude": "19.82"},
+    "Velika Plana": {"latitude": "44.33", "longitude": "21.07"},
+    "Kikinda": {"latitude": "45.83", "longitude": "20.48"},
+    "Beograd": {"latitude": "44.78", "longitude": "20.47"},
+}
+DEFAULT_CITY = "Novi Sad"
 WEATHER_NOT_READABLE_SECONDS = (60 * 30)
-WEATHER_FORCAST_API_URL = "https://api.weatherbit.io/v2.0/forecast/daily"
+TODAY_MAX_HOURS = 25     # 24 hours max display plus current hour
+DEFAULT_PARMS = {
+    "latitude": "45.26",
+    "longitude": "19.82",
+    "hourly": "temperature_2m,weathercode,precipitation",
+    "timezone": "auto",
+    "daily": 'weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset'
+}
+
+LANGS = ["en", "sr"]
+DEFAULT_LANG = "sr"
+
 WEATHER_CODES = {
-    200: "Grmljavina sa slabom kišom",
-    201: "Grmljavina sa kišom",
-    202: "Grmljavina sa obilnom kišom",
-    230: "Grmljavina sa slabom kišom",
-    231: "Grmljavina sa slabom kišom",
-    232: "Grmljavina sa kišom",
-    233: "Grmljavina sa gradom",
-    300: "Slaba kiša",
-    301: "Slaba kiša",
-    302: "Obilna kiša",
-    500: "Slaba kiša",
-    501: "Umerena kiša",
-    502: "Obilna kiša",
-    511: "Ledena kiša",
-    520: "Slabiji pljusak",
-    521: "Pljusak",
-    522: "Obilni pljusak",
-    600: "Slab sneg",
-    601: "Sneg",
-    602: "Jak sneg",
-    610: "Sneg sa kišom",
-    611: "Bljuzgavica",
-    612: "Obilna bljuzgavica",
-    621: "Mećava",
-    622: "Jaka mećava",
-    623: "Jaka mećava",
-    700: "Slaba magla",
-    711: "Smog",
-    721: "Sumaglica",
-    731: "Pesak/prašina",
-    741: "Magla",
-    751: "Ladena magla",
-    800: "Vedro",
-    801: "Poneki oblak",
-    802: "Rasuti oblaci",
-    803: "Pretežno oblačno",
-    900: "Nepoznate padavine"
+    0: {"en": "Clear sky", "sr": "Vedro", "icon": "c01"},
+    1: {"en": "Mainly clear", "sr": "Uglavnom vedro", "icon": "c02"},
+    2: {"en": "Partly cloudy", "sr": "Delimično oblačno", "icon": "c03"},
+    3: {"en": "Overcast", "sr": "Oblačno", "icon": "c04"},
+    45: {"en": "Fog", "sr": "Magla", "icon": "a01"},
+    48: {"en": "Depositing rime fog", "sr": "Taloženje magle", "icon": "a01"},
+    51: {"en": "Light drizzle", "sr": "Slaba kiša", "icon": "d01"},
+    53: {"en": "Moderate drizzle", "sr": "Umerena kiša", "icon": "d01"},
+    55: {"en": "Dense drizzle", "sr": "Gusta kiša", "icon": "d01"},
+    56: {"en": "Light freezing drizzle", "sr": "Slaba ledena kiša", "icon": "d01"},
+    57: {"en": "Dense feezing drizzle", "sr": "Gusta ledena kiša", "icon": "d01"},
+    61: {"en": "Slight rain", "sr": "Slaba kiša", "icon": "r01"},
+    63: {"en": "Moderate rain", "sr": "Umerena kiša", "icon": "r01"},
+    65: {"en": "Heavy", "sr": "Jaka kiša", "icon": "r01"},
+    66: {"en": "Light freezing rain", "sr": "Slaba ledena kiša", "icon": "f01"},
+    67: {"en": "Heavy freezing rain", "sr": "Jaka ledena kiša", "icon": "f01"},
+    71: {"en": "Slight snow", "sr": "Slab sneg", "icon": "s01"},
+    73: {"en": "Moderate snow", "sr": "Umeren sneg", "icon": "s01"},
+    75: {"en": "Heavy snow", "sr": "Gust sneg", "icon": "s01"},
+    77: {"en": "Snow grains", "sr": "Ledeni sneg", "icon": "s01"},
+    80: {"en": "Slight rain showers", "sr": "Laki pljuskovi", "icon": "r01"},
+    81: {"en": "Moderate rain showers", "sr": "Umereni pljuskovi", "icon": "r01"},
+    82: {"en": "Violent rain showers", "sr": "Jaki pljuskovi", "icon": "r02"},
+    85: {"en": "Slight snow showers", "sr": "Slab sneg", "icon": "s01"},
+    86: {"en": "Heavy snow showers", "sr": "Jak sneg", "icon": "s01"},
+    95: {"en": "Thunderstorm", "sr": "Grmljavina", "icon": "t01"},
+    96: {"en": "Thunderstorm with slight hail", "sr": "Grmljavina sa slabim gradom", "icon": "t02"},
+    99: {"en": "Thunderstorm with heavy hail", "sr": "Grmljavina sa jakim gradom", "icon": "t02"},
+}
+
+WEEK_DAYS = {
+    0: {"en": "Monday", "sr": "Ponedeljak"},
+    1: {"en": "Tuesday", "sr": "Utorak"},
+    2: {"en": "Wednesday", "sr": "Sreda"},
+    3: {"en": "Thursday", "sr": "Četvrtak"},
+    4: {"en": "Friday", "sr": "Petak"},
+    5: {"en": "Saturday", "sr": "Subota"},
+    6: {"en": "Sunday", "sr": "Nedelja"}
 }

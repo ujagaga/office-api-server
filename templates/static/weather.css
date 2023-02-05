@@ -15,6 +15,30 @@ body{
   margin: 0;
 }
 
+.light-on-off{
+    display: block;
+    width: 4em;
+    height: 4em;
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 50%;
+    position: fixed;
+    top: 1em;
+    left: 1em;
+    z-index: 13;
+    -webkit-box-shadow: 0px 0px 10px 3px rgba(245,247,172,1);
+    -moz-box-shadow: 0px 0px 10px 3px rgba(245,247,172,1);
+    box-shadow: 0px 0px 10px 3px rgba(245,247,172,1);
+}
+.light-on-off:after{
+    content: "";
+    width: 0;
+    height: 1em;
+    position: absolute;
+    border: 2px solid white;
+    margin-left: calc(2em - 1px);
+}
+
 #headline_container, #status_container{
     position: fixed;
     left: 0;
@@ -25,6 +49,7 @@ body{
     display: block;
     z-index: 5;
     text-align: center;
+    font-size: 1.5em;
 }
 #headline_container{
     top: 0;
@@ -38,14 +63,19 @@ body{
     margin-bottom: 2px;
 }
 
-#headline_container p{
+#headline_container select{
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     text-align: center;
     font-size: 3vh;
-    margin: 0.5vh;
+    margin: 0vh;
+    background-color: rgba(0,0,0,.5);
+    padding: 5px;
+    border: none;
+    outline: 0;
+    color: white;
 }
 
 .transparent_back{
@@ -68,60 +98,64 @@ body{
     z-index: 1;
 }
 
-#weather_video{
-    height: auto;
-    width: auto;
+.weather_video{
     min-width: 100vw;
     min-height: 100vh;
+    width: auto;
+    height: auto;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    transition: opacity 2s;
+}
+.fading {
+    opacity: 0;
 }
 
-#weather_msg{
-    padding: 0;
-    display: inline-block;
-    width: 100%;
-    line-height: 1em;
-    margin-top: 0.5em !important;
+.showing {
+    opacity: 1;
 }
 
-#weather_msg img{
-    height: 3em;
-    float: right;
-    margin: -0.5em 1em -1.5em 0;
-}
-
-.forcast{
+.forcast_scroll{
     width: 100%;
     padding: 0;
     margin: 0;
-    display: flex
-    justify-content: space-between;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    border-top: 1px solid black;
 }
-.daily_forcast{
-    padding: 0 0 20px 0;
-    margin: auto;
-    float: left;
-    width: calc(25% - 2px);
-    max-width: calc(25% - 2px);
+.forcast{
+    padding: 0 2px;
+    margin: 0;
     overflow: hidden;
-}
-.daily_forcast:nth-child(1), .daily_forcast:nth-child(2), .daily_forcast:nth-child(3){
+    display: inline-block;
     border-right: 1px solid black;
 }
-.daily_forcast p{
-    width: calc(100% - 4px);
-    padding: 2px;
-    line-height: 1em;
+.forcast:first-child{
+    border-left: None;
+}
+.forcast:last-child{
+    border-right: None;
+}
+.forcast p{
+    width: 100%;
+    padding: 0;
     margin: 0;
-    height: 1em;
+}
+.forcast img{
+    height: 2em;
+    margin: 0;
+    padding: 0;
+}
+.time_mark{
+    float: left;
+    color: black;
+    margin-right: 5px;
 }
 .small{
     font-size: 0.7em;
-    margin-top: 0.1em;
-    display: inline-block;
 }
 .left-aligned{
     float: left;
@@ -129,53 +163,15 @@ body{
 .right-aligned{
     float: right;
 }
-.small_icon{
-    height: 1.1em;
-    width: auto;
-}
-.daily_forcast p img{
-    height: 1.6em;
-    float: right;
-    margin: -0.3em 1em -0.3em 0;
-}
+
 .bottom-border{
     border-bottom: 1px solid black;
-}
-.forcast_date{
-    font-size: 0.8em;
-    font-weight: 800;
-    padding: 0  !important;
-    margin: 0  !important;
-    line-height: 0.8em !important;
-}
-.light-on-off{
-    display: block;
-    width: 4em;
-    height: 4em;
-    background-color: black;
-    border: 2px solid white;
-    border-radius: 50%;
-    position: fixed;
-    bottom: 9em;
-    left: 1em;
-    z-index: 13;
-    -webkit-box-shadow: 0px 0px 10px 3px rgba(245,247,172,1);
-    -moz-box-shadow: 0px 0px 10px 3px rgba(245,247,172,1);
-    box-shadow: 0px 0px 10px 3px rgba(245,247,172,1);
-}
-.light-on-off:after{
-    content: "";
-    width: 0;
-    height: 1em;
-    position: absolute;
-    border: 2px solid white;
-    margin-left: calc(2em - 1px);
 }
 
 #display_temp{
     position: fixed;
     font-size: 25vh;
-    top: 50vh;
+    top: 30vh;
     left: 50vw;
     transform: translate(-50%, -50%);
     z-index: 100;
@@ -188,4 +184,34 @@ body{
 .mini{
     font-size: 0.3em;
     line-height: 0.3em;
+}
+.daily_display{
+    margin: 0;
+    padding: 0;
+}
+.lower{
+    font-size: 0.6em;
+    margin: 1em 0 0 0;
+    line-height: 2em;
+    vertical-align: bottom;
+}
+
+.higher{
+    font-size: 0.6em;
+    margin: 0 0 1em 0;
+    line-height: 2em;
+    vertical-align: top;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 4px grey;
+  border-radius: 4px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 4px;
 }

@@ -1,6 +1,4 @@
 import json
-import time
-
 from fastapi import Depends, FastAPI, HTTPException, Request, status, Cookie
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import RedirectResponse
@@ -11,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import crud, models, helper, config
 from .database import SessionLocal, engine
 import os
+from datetime import datetime, timedelta
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -249,85 +248,37 @@ def toggle_light(request: Request, token: str | None = Cookie(default=None), db:
 
 
 @app.get("/weather")
-def weather(request: Request, token: str | None = Cookie(default=None), db: Session = Depends(get_db), status_msg: str = "", location: str = "Novi Sad"):
+def weather(request: Request, token: str | None = Cookie(default=None), db: Session = Depends(get_db)):
     if not check_authorized(token=token, db=db):
         return RedirectResponse(url='/login?referer=/weather', status_code=status.HTTP_302_FOUND)
-# def weather(request: Request, location: str = "Novi Sad", db: Session = Depends(get_db)):
-    # Current weather report
-    city = location
-    weather_msg = "Greska u prikupljanju podataka"
-    temperature = ""
-    icon = ""
-    icon_location = config.WEATHER_ICON_URL
-    display_temp = ""
 
-    db_current_weather_data = read_general_data(data_key="current_weather", db=db)
-
-    proceed = True
+    db_current_weather_data = read_general_data(data_key=config.DEFAULT_CITY, db=db)
+    read_api_data_flag = True
     if db_current_weather_data is not None:
-        if time.time() - db_current_weather_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
-            proceed = False
-        else:
-            data_status = db_current_weather_data["value"]["status"]
-            if "ERR" in data_status:
-                proceed = False
+        if datetime.now().timestamp() - db_current_weather_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
+            weather_data = db_current_weather_data["value"]
+            read_api_data_flag = False
 
-    if proceed:
-        weather = helper.get_current_weather(city_name=location)
-        update_general_data(data_key="current_weather", data_value=json.dumps(weather), db=db)
+    if read_api_data_flag:
+        weather_data = helper.get_weather_forcast(city_name=config.DEFAULT_CITY)
+        if "OK" in weather_data['status']:
+            city_name = weather_data["detail"]["city_name"]
+            weather_info = json.dumps(weather_data)
+            update_general_data(data_key=city_name, data_value=weather_info, db=db)
+
+    weather_status = weather_data.get("status", "ERROR")
+    if "OK" in weather_status:
+        forcast_data = weather_data["detail"]
+        error_message = None
     else:
-        weather = db_current_weather_data["value"]
-
-    current_weather_status = weather.get("status", "ERR")
-    if "OK" in current_weather_status:
-        try:
-            data = weather["detail"]
-            city = data["city"]
-            weather_msg = data["weather"]
-            temperature = f"Osećaj: {data['temp_feel']}{chr(176)}C"
-            display_temp = data['temp']
-            icon = data["weather_icon"]
-
-        except Exception as e:
-            print(f"ERROR parsing weather data: {e}", flush=True)
-    else:
-        print(f"ERROR reading weather data: {weather}")
-        weather_msg = weather["detail"]["message"]
-
-    # Weather forcast
-    db_weather_forcast_data = read_general_data(data_key="future_weather", db=db)
-    proceed = True
-    if db_weather_forcast_data is not None:
-        if time.time() - db_weather_forcast_data["timestamp"] < config.WEATHER_NOT_READABLE_SECONDS:
-            proceed = False
-        else:
-            data_status = db_weather_forcast_data["value"]["status"]
-            if "ERR" in data_status:
-                proceed = False
-
-    if proceed:
-        weather_forcast = helper.get_weather_forcast(city_name=location)
-        update_general_data(data_key="future_weather", data_value=json.dumps(weather_forcast), db=db)
-    else:
-        weather_forcast = db_weather_forcast_data["value"]
-
-    forcast_weather_status = weather_forcast.get("status", "ERR")
-    if "OK" in forcast_weather_status:
-        forcast_data = weather_forcast["detail"]
-        weather_forcast_msg = None
-    else:
-        print(f"ERROR reading weather forcast: {weather}")
-        weather_forcast_msg = weather_forcast["detail"]["message"]
+        print(f"ERROR reading weather forcast: {weather_data}")
+        error_message = weather_data["detail"]["message"]
         forcast_data = None
 
     return templates.TemplateResponse("weather.html", {
         "request": request,
-        "city": city,
-        "weather_msg": weather_msg,
-        "temperature": temperature,
-        "display_temp": display_temp,
-        "icon": icon,
-        "icon_location": icon_location,
-        "weather_forcast_msg": weather_forcast_msg,
-        "forcast_data": forcast_data
+        "error_message": error_message,
+        "forcast_data": forcast_data,
+        "lang": "sr",
+        "weekdays": config.WEEK_DAYS
     })
