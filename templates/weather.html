@@ -40,12 +40,10 @@
             {% for item in forcast_data.hourly %}
             <div class="forcast">
                 <p><sup class="time_mark">{{ item.hour }}:00</sup>{{ item.temp }}&#8451;</p>
-                {% if item.prec > 0 %}
-                <p class="small">P:{{ item.prec }}mm</p>
-                {% else %}
-                <p class="small">-</p>
-                {% endif %}
-                <img src="static/icons/{{ item.icon }}.png"/>
+                <p class="small">
+                    {% if item.prec > 0 %}P:{{ item.prec }}mm{% endif %}
+                    <img src="static/icons/{{ item.icon }}.png"/>
+                </p>
             </div>
             {% endfor %}
         </div>

@@ -105,14 +105,6 @@ def stop_webcam_stream():
     return result.returncode
 
 
-def get_weather_status(status_code, lang=config.DEFAULT_LANG):
-    data = config.WEATHER_CODES.get(status_code, None)
-    if data is None:
-        return "ERR: No such weather code."
-    else:
-        return data.get(lang, "ERR: No description available.")
-
-
 def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
     if city_name not in config.LOCATIONS.keys():
         city_name = config.DEFAULT_CITY
