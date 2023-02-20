@@ -146,8 +146,8 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
 
                     today_info = {
                         "day": day_name,
-                        "temp_min": temp_min,
-                        "temp_max": temp_max,
+                        "temp_min": int(temp_min + 0.5),
+                        "temp_max": int(temp_max + 0.5),
                         "sunrise": daily_data["sunrise"][i],
                         "sunset": daily_data["sunset"][i],
                     }
@@ -158,8 +158,8 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
                     forcast_data.append({
                         "day": item_date.weekday(),
                         "date": f"{ item_date.day }.{ item_date.month }",
-                        "temp_min": temp_min,
-                        "temp_max": temp_max,
+                        "temp_min": int(temp_min + 0.5),
+                        "temp_max": int(temp_max + 0.5),
                         "icon": icon_name
                     })
 
@@ -190,13 +190,13 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
                         if item_time.replace(minute=0) <= now < (item_time.replace(minute=0) + timedelta(hours=1)):
                             today_info["description"] = description
                             today_info["icon_name"] = icon_name
-                            today_info["temp"] = temperature
+                            today_info["temp"] = int(temperature + 0.5)
                             today_info_set_flag = True
 
                     if not today_info_set_flag:
                         today_data.append({
                             "hour": item_time.hour,
-                            "temp": temperature,
+                            "temp": int(temperature + 0.5),
                             "icon": icon_name,
                             "prec": precipitation
                         })
