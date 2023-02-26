@@ -41,7 +41,6 @@
             <div class="forcast">
                 <p><sup class="time_mark">{{ item.hour }}:00</sup>{{ item.temp }}&#8451;</p>
                 <p class="small">
-                    {% if item.prec > 0 %}P:{{ item.prec }}mm{% endif %}
                     <img src="static/icons/{{ item.icon }}.png"/>
                 </p>
             </div>
