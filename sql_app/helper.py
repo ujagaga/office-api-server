@@ -128,7 +128,7 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
             daily_data = json_ret_val["daily"]
 
             now = datetime.now()
-            today_info = None
+            today_info = {}
 
             forcast_data = []
 
@@ -146,8 +146,8 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
 
                     today_info = {
                         "day": day_name,
-                        "temp_min": int(temp_min + 0.5),
-                        "temp_max": int(temp_max + 0.5),
+                        "temp_min": temp_min,
+                        "temp_max": temp_max,
                         "sunrise": daily_data["sunrise"][i],
                         "sunset": daily_data["sunset"][i],
                     }
@@ -168,16 +168,16 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
             start_time = now - timedelta(hours=1)
             end_time = start_time + timedelta(hours=config.TODAY_MAX_HOURS)
 
+            interval_data = {}
+            interval_len = 0
             for i in range(0, len(hourly_data["time"])):
-                temperature = hourly_data["temperature_2m"][i]
-                weather_code = hourly_data["weathercode"][i]
-                precipitation = hourly_data["precipitation"][i]
-
                 item_time = datetime.strptime(hourly_data["time"][i], '%Y-%m-%dT%H:%M')
                 if start_time <= item_time <= end_time:
-                    icon_name = None
+
+                    temperature = hourly_data["temperature_2m"][i]
+                    weather_code = hourly_data["weathercode"][i]
                     description = config.WEATHER_CODES.get(weather_code, None)
-                    today_info_set_flag = False
+
                     if description is not None and today_info is not None:
                         sunrise = datetime.strptime(today_info["sunrise"], '%Y-%m-%dT%H:%M')
                         sunset = datetime.strptime(today_info["sunset"], '%Y-%m-%dT%H:%M')
@@ -188,18 +188,26 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
                             icon_name = f"{description['icon']}n"
 
                         if item_time.replace(minute=0) <= now < (item_time.replace(minute=0) + timedelta(hours=1)):
-                            today_info["description"] = description
+                            today_info["weather_code"] = weather_code
+                            today_info["description"] = description.get(config.DEFAULT_LANG, "No translation available")
                             today_info["icon_name"] = icon_name
                             today_info["temp"] = int(temperature + 0.5)
-                            today_info_set_flag = True
+                        else:
+                            if interval_len == 0 or interval_len > 2 or interval_data.get("icon", "none") != icon_name:
+                                if interval_len > 0:
+                                    interval_data["end_hour"] = item_time.hour
+                                    interval_data["end_temp"] = temperature
+                                    interval_data["mid_temp"] = int(((interval_data["end_temp"] + interval_data["start_temp"]) / 2) + 0.5)
+                                    today_data.append(interval_data)
+                                    interval_len = 0
 
-                    if not today_info_set_flag:
-                        today_data.append({
-                            "hour": item_time.hour,
-                            "temp": int(temperature + 0.5),
-                            "icon": icon_name,
-                            "prec": precipitation
-                        })
+                                interval_data = {
+                                    "start_hour": item_time.hour,
+                                    "start_temp": temperature,
+                                    "icon": icon_name
+                                }
+
+                            interval_len += 1
 
             detail = {"city_name": city_name, "today_info": today_info, "hourly": today_data, "daily": forcast_data}
 

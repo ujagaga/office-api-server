@@ -34,12 +34,13 @@
         <div class="transparent_back"></div>
 
         <p>
-            {{ forcast_data.today_info.description[lang] }}
+            {{ forcast_data.today_info.description }}
         </p>
         <div class="forcast_scroll">
             {% for item in forcast_data.hourly %}
             <div class="forcast">
-                <p><sup class="time_mark">{{ item.hour }}:00</sup>{{ item.temp }}&#8451;</p>
+                <p class="time_mark">{{ item.start_hour }}:00 - {{ item.end_hour }}:00</p>
+                <p>{{ item.mid_temp }}&#8451;</p>
                 <p class="small">
                     <img src="static/icons/{{ item.icon }}.png"/>
                 </p>
@@ -49,7 +50,7 @@
         <div class="forcast_scroll">
             {% for item in forcast_data.daily %}
             <div class="forcast">
-                <p><sup>{{ weekdays[item.day][lang] }}</sup></p>
+                <p><sup>{{ weekdays[item.day] }}</sup></p>
                 <p class="daily_display">
                     <span class="lower">{{ item.temp_min }}&#8451;</span>
                     <img src="static/icons/{{ item.icon }}.png"/>
