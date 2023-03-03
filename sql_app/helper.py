@@ -141,8 +141,8 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
                 icon_name = None
                 description = config.WEATHER_CODES.get(weather_code, None)
 
+                day_name = config.WEEK_DAYS[item_date.weekday()][config.DEFAULT_LANG]
                 if item_date.date() == datetime.now().date():
-                    day_name = config.WEEK_DAYS[item_date.weekday()][config.DEFAULT_LANG]
 
                     today_info = {
                         "day": day_name,
