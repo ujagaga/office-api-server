@@ -50,7 +50,7 @@
         <div class="forcast_scroll">
             {% for item in forcast_data.daily %}
             <div class="forcast">
-                <p><sup>{{ weekdays[item.day] }}</sup></p>
+                <p><sup>{{ item.day }}</sup></p>
                 <p class="daily_display">
                     <span class="lower">{{ item.temp_min }}&#8451;</span>
                     <img src="static/icons/{{ item.icon }}.png"/>

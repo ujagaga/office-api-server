@@ -156,7 +156,7 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
                         icon_name = f"{description['icon']}d"
 
                     forcast_data.append({
-                        "day": item_date.weekday(),
+                        "day": day_name,
                         "date": f"{ item_date.day }.{ item_date.month }",
                         "temp_min": int(temp_min + 0.5),
                         "temp_max": int(temp_max + 0.5),
