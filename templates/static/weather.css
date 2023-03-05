@@ -117,15 +117,25 @@ body{
     opacity: 1;
 }
 
+#hourly_container{
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid black;
+    white-space: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
 .forcast_scroll{
     width: 100%;
     padding: 0;
     margin: 0;
-    overflow-x: scroll;
-    overflow-y: hidden;
     white-space: nowrap;
     border-top: 1px solid black;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
+
 .forcast{
     padding: 0 2px;
     margin: 0;
@@ -146,6 +156,7 @@ body{
     clear: both;
     line-height: 1em;
 }
+
 .forcast img{
     height: 2em;
     margin: 0;

@@ -168,8 +168,6 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
             start_time = now - timedelta(hours=1)
             end_time = start_time + timedelta(hours=config.TODAY_MAX_HOURS)
 
-            interval_data = {}
-            interval_len = 0
             for i in range(0, len(hourly_data["time"])):
                 item_time = datetime.strptime(hourly_data["time"][i], '%Y-%m-%dT%H:%M')
                 if start_time <= item_time <= end_time:
@@ -177,6 +175,7 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
                     temperature = hourly_data["temperature_2m"][i]
                     weather_code = hourly_data["weathercode"][i]
                     description = config.WEATHER_CODES.get(weather_code, None)
+                    precipitation = hourly_data["precipitation"][i]
 
                     if description is not None and today_info is not None:
                         sunrise = datetime.strptime(today_info["sunrise"], '%Y-%m-%dT%H:%M')
@@ -193,21 +192,14 @@ def get_weather_forcast(city_name: str = config.DEFAULT_CITY) -> dict:
                             today_info["icon_name"] = icon_name
                             today_info["temp"] = int(temperature + 0.5)
                         else:
-                            if interval_len == 0 or interval_len > 2 or interval_data.get("icon", "none") != icon_name:
-                                if interval_len > 0:
-                                    interval_data["end_hour"] = item_time.hour
-                                    interval_data["end_temp"] = temperature
-                                    interval_data["mid_temp"] = int(((interval_data["end_temp"] + interval_data["start_temp"]) / 2) + 0.5)
-                                    today_data.append(interval_data)
-                                    interval_len = 0
-
-                                interval_data = {
-                                    "start_hour": item_time.hour,
-                                    "start_temp": temperature,
-                                    "icon": icon_name
-                                }
-
-                            interval_len += 1
+                            interval_data = {
+                                "hour": item_time.hour,
+                                "temp": temperature,
+                                "icon_name": icon_name,
+                                "prec": precipitation,
+                                "wc": weather_code
+                            }
+                            today_data.append(interval_data)
 
             detail = {"city_name": city_name, "today_info": today_info, "hourly": today_data, "daily": forcast_data}
 

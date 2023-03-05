@@ -279,6 +279,5 @@ def weather(request: Request, token: str | None = Cookie(default=None), db: Sess
         "request": request,
         "error_message": error_message,
         "forcast_data": forcast_data,
-        "lang": "sr",
         "weekdays": config.WEEK_DAYS
     })
