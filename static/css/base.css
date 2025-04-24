@@ -1,0 +1,200 @@
+/* base.css */
+
+/* Basic resets and box-sizing */
+*,
+::after,
+::before {
+  box-sizing: inherit;
+}
+html {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family:
+    BlinkMacSystemFont,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  height: 100%; /* Ensure full viewport height */
+  overflow: hidden; /* Prevent scrollbars on body */
+  color: #333; /* Default text color, will be overridden by theme */
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 400;
+  word-break: break-word;
+}
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.125;
+  margin-bottom: 1.5rem; /* Consistent bottom margin for titles */
+}
+
+/* Links */
+a, a:hover, a:focus, a:active {
+  color: #fff; 
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+}
+
+a:hover{
+  opacity: 0.8;
+}
+
+/* Layout Containers */
+.hero {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure full viewport height */
+}
+.hero.is-fullheight {
+  height: 100%; /* Override min-height if needed */
+}
+.hero-head {
+  flex-grow: 0;
+  flex-shrink: 0;
+  z-index: 30; /* Ensure navbar is above content */
+}
+.hero-body {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  align-items: center; /* Vertically center content by default */
+  justify-content: center; /* Horizontally center content by default */
+  padding: 2rem; /* Consistent padding */
+}
+.container {
+  width: 100%;
+  max-width: 1000px; /* Example max width */
+  margin: 0 auto;
+  position: relative;
+}
+.limited {
+  max-width: 400px;
+  margin: 0 auto;
+  width: 90%; /* Adjust for smaller screens */
+}
+
+/* Navigation Bar */
+.navbar {
+  background-color: #111111;
+  display: flex; /* Already present */
+  align-items: stretch; /* Already present */
+  justify-content: space-between; /* Keep this for potential items on the far right */
+  padding: 0;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around; /* Distribute items evenly with space around them */
+  flex-grow: 1; /* Allow it to take up available space */
+}
+
+.navbar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  flex-grow: 0;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+a.navbar-item {
+  cursor: pointer;
+}
+
+/* Forms and Inputs */
+input {
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border-radius: 5px;
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+  max-width: 100%;
+}
+button {
+  color: white;
+  background-color: #333; 
+  padding: 0.75rem 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+button:hover {
+  opacity: 0.8;
+}
+.full-width {
+  width: 100%;
+}
+
+/* Flash Message Overlay (assuming you are using it) */
+.flash-message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.flash-message-content {
+  background-color: white;
+  color: black;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+/* Color Theming (dynamic from Flask) */
+body {
+  color: var(--text-color, #333); /* Fallback to default */
+}
+.hero,
+.container {
+  color: var(--text-color, #333); /* Fallback to default */
+}
+.hero-body {
+  background-color: var(--background-color, #f8f9fa); /* Fallback to default */
+}
+.navbar {
+  background-color: var(--navbar-color, #343a40); /* Fallback to default */
+}
+.navbar-item {
+  border-color: var(--text-color, #333); /* Fallback to default */
+}
+.navbar-item:hover,
+.navbar-item:hover i {
+  opacity: 0.7;
+}
+
+.has-text-centered {
+  text-align: center !important;
+}

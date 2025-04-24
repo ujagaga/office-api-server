@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sudo apt install -y uvicorn python3-pip ustreamer
-pip3 install fastapi python-multipart requests sqlalchemy jinja2 pyserial
+sudo apt install -y python3-pip ustreamer
+pip3 install flask bcrypt opencv-python pyserial
 
 SERVICE_NAME=officeserver.service
 SERVICE_FILE=/etc/systemd/system/$SERVICE_NAME
@@ -17,7 +17,7 @@ echo
 echo "[Service]"
 echo Type=simple
 echo User=$USER
-echo ExecStart=uvicorn sql_app.main:app --reload --host 0.0.0.0 --port 8000
+echo ExecStart=uflask --app index run --host 0.0.0.0 --port 8000 --reload
 echo WorkingDirectory=$PWD
 echo
 echo "[Install]"

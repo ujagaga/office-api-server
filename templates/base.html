@@ -1,0 +1,87 @@
+<!-- templates/base.html -->
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>Office Server</title>
+
+    <link rel="icon" type="image/png" href="/static/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/static/css/base.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/flashpopup.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/solid.min.css">
+
+    <style>
+      body {
+        color: {{ colors['COLOR_TEXT'] }};
+      }
+      .hero, .container{
+        color: {{ colors['COLOR_TEXT'] }};
+      }
+      .hero-body{
+        background-color: {{ colors['COLOR_BACKGROUND'] }}
+      }
+      .navbar{
+        background-color: {{ colors['COLOR_NAVBAR'] }};
+      }
+      .navbar-item:hover, .navbar-item:hover i{
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="hero is-primary is-fullheight">
+      <div class="hero-head">
+        <nav class="navbar">
+          <div class="container">
+            <div id="navbarMenuHeroA" class="navbar-menu">
+              {% if resolutions %}
+              <select name="resolution" id="resolution" class="navbar-item">
+                {% for res in resolutions %}
+                <option value="{{res}}" {% if current_res==res %} selected {% endif %}>{{res}}</option>
+                {% endfor %}
+              </select>
+              {% endif %}
+
+              {% if show_logout %}
+              <a href="/logout" class="navbar-item" title="{{ language['logout'] }}">
+                <i class="fa fa-right-from-bracket"></i>
+              </a>
+              {% endif %}
+
+              {% if show_home %}
+              <a href="/" class="navbar-item" id="home_nav" title="{{ language['home'] }}">
+                <i class="fa fa-house"></i>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-message-overlay">
+            <div class="flash-message-content">
+              {{ messages[0] }}
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+
+
+      {% block content %} {% endblock %}
+
+    </section>
+  <script src="static/js/flashpopup.js"></script>
+  </body>
+</html>

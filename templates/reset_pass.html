@@ -1,0 +1,21 @@
+<!-- templates/login.html -->
+
+{% extends "base.html" %} {% block content %}
+<div class="hero-body">
+    <div class="container has-text-centered">
+        <div class="limited">
+            <h3 class="title">{{ language['reset_password'] }}</h3>
+            <div class="box">
+                <form method="POST" action="/reset_pass">
+                    <div>
+                        <div class="control">
+                            <input type="email" name="email" placeholder="{{ language['your_email'] }}" autofocus=""/>
+                        </div>
+                    </div>
+                    <button type="submit" class="full-width">{{ language['reset'] }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
