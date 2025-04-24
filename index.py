@@ -1,4 +1,6 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 from flask import Flask, render_template, redirect, request, flash, g
 import config
 import database
@@ -223,4 +225,4 @@ def index():
 
 
 if __name__ == "__main__":
-    Flask.run(app, host="0.0.0.0", port=8000, debug=False)
+    Flask.run(app, host="0.0.0.0", port=config.SERVER_PORT, debug=False)

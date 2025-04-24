@@ -1,3 +1,0 @@
-[submodule "templates/static/videos"]
-	path = templates/static/videos
-	url = git@github.com:ujagaga/weather_videos.git

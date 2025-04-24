@@ -1,7 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sudo apt install -y python3-pip ustreamer
-pip3 install flask bcrypt opencv-python pyserial
+
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install flask bcrypt opencv-python
+
+chmod +x index.py
 
 SERVICE_NAME=officeserver.service
 SERVICE_FILE=/etc/systemd/system/$SERVICE_NAME
@@ -17,7 +22,7 @@ echo
 echo "[Service]"
 echo Type=simple
 echo User=$USER
-echo ExecStart=uflask --app index run --host 0.0.0.0 --port 8000 --reload
+echo ExecStart=$PWD/run_server.sh
 echo WorkingDirectory=$PWD
 echo
 echo "[Install]"

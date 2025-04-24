@@ -5,6 +5,7 @@ SMTP_PORT = 587
 SMTP_USER = "account_mail@smtp.server"
 SMTP_PASS = "user_account_password"
 
+SERVER_PORT = 8000
 DB_FILE = "users.db"
 FLASK_APP_SECRET_KEY = "9OLWxND4o83j4K4_any_random_string"
 TOKEN_DURATION = 60 * 60 * 24 * 10  # 10 days
