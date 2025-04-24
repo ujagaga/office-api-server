@@ -1,35 +1,45 @@
 #!/usr/bin/env bash
 
+SERVICE_NAME=officeserver.service
+SERVICE_FILE=/etc/systemd/system/$SERVICE_NAME
+
+# --- Installation Section ---
+echo "Installing dependencies..."
+sudo apt update -y
 sudo apt install -y python3-pip ustreamer
 
+echo "Creating virtual environment..."
 python3 -m venv .venv
 source .venv/bin/activate
 pip3 install flask bcrypt opencv-python
 
+echo "Making index.py executable..."
 chmod +x index.py
 
-SERVICE_NAME=officeserver.service
-SERVICE_FILE=/etc/systemd/system/$SERVICE_NAME
+# --- Service File Creation ---
+echo "Creating systemd service file: $SERVICE_FILE"
+cat <<EOF > "$PWD/$SERVICE_NAME"
+[Unit]
+Description=Office Server
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
 
-## Create new startup service 
-{
-echo "[Unit]"
-echo Description=Office Server
-echo After=network-online.target
-echo Wants=network-online.target
-echo StartLimitIntervalSec=0
-echo
-echo "[Service]"
-echo Type=simple
-echo User=$USER
-echo ExecStart=$PWD/run_server.sh
-echo WorkingDirectory=$PWD
-echo
-echo "[Install]"
-echo WantedBy=multi-user.target
-} > $PWD/$SERVICE_NAME
-sudo mv $SERVICE_NAME $SERVICE_FILE
+[Service]
+Type=simple
+User=$USER
+ExecStart=$PWD/run_server.sh
+WorkingDirectory=$PWD
+Restart=on-failure
 
-## Run the service 
-sudo systemctl enable $SERVICE_NAME
-sudo systemctl start $SERVICE_NAME
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo mv "$PWD/$SERVICE_NAME" "$SERVICE_FILE"
+
+# --- Service Management ---
+echo "Enabling and starting the service..."
+sudo systemctl enable "$SERVICE_NAME"
+sudo systemctl start "$SERVICE_NAME"
+
+echo "Office Server installation and service started successfully!"
