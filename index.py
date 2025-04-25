@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 app.config["SECRET_KEY"] = config.FLASK_APP_SECRET_KEY
 app.config.update(
-    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SECURE=False,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
 )
@@ -99,7 +99,7 @@ def login():
     database.update_user(email=email, token=token)
 
     response = redirect("/")
-    response.set_cookie("authToken", token, httponly=False, secure=True, samesite="Strict")
+    response.set_cookie("authToken", token, httponly=True, secure=False, samesite="Lax")
     return response
 
 
