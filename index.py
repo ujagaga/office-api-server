@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, redirect, request, flash, g
@@ -201,7 +201,6 @@ def index():
     helper.run_ustreamer(False)
     time.sleep(1)
     resolutions = helper.check_supported_resolutions()
-    print("Resolutions:", resolutions)
 
     if resolution_request:
         database.update_user(email=g.user["email"], resolution=resolution_request)

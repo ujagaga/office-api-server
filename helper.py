@@ -143,11 +143,25 @@ def check_supported_resolutions(camera_index=config.CAMERA_INDEX):
         print(f"Error calling v4l2-ctl: {e.output.decode()}")
         return []
 
-    resolutions = set()
+    resolutions = {}
     for line in output.splitlines():
         match = re.search(r'\s+Size:\s+Discrete\s+(\d+)x(\d+)', line)
         if match:
             width, height = match.groups()
-            resolutions.add(f"{width}x{height}")
+            width_int = width
+            try:
+                width_int = int(width)
+            except ValueError:
+                pass
 
-    return sorted(resolutions)
+            resolutions[width_int] = height
+
+    sorted_list = []
+
+    for key in sorted(resolutions.keys()):
+        resolution = f"{key}x{resolutions[key]}"
+        sorted_list.append(resolution)
+
+    print("Sorted Resolutions: ", sorted_list)
+
+    return sorted_list
