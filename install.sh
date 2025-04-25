@@ -30,9 +30,21 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Installing Python packages..."
-pip3 install flask bcrypt opencv-python
+pip3 install flask
 if [ $? -ne 0 ]; then
-  echo "Error: Failed to install Python packages. Aborting installation."
+  echo "Error: Failed: pip3 install flask. Aborting installation."
+  exit 1
+fi
+
+pip3 install bcrypt 
+if [ $? -ne 0 ]; then
+  echo "Error: Failed: pip3 install bcrypt. Aborting installation."
+  exit 1
+fi
+
+pip3 install opencv-python
+if [ $? -ne 0 ]; then
+  echo "Error: Failed: pip3 install opencv-python. Aborting installation."
   exit 1
 fi
 
