@@ -201,6 +201,7 @@ def index():
     helper.run_ustreamer(False)
     time.sleep(1)
     resolutions = helper.check_supported_resolutions()
+    print("Resolutions:", resolutions)
 
     if resolution_request:
         database.update_user(email=g.user["email"], resolution=resolution_request)

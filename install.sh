@@ -10,7 +10,7 @@ if ! sudo apt update -y; then
   exit 1
 fi
 
-if ! sudo apt install -y python3-pip python3-venv ustreamer; then
+if ! sudo apt install -y python3-pip python3-venv ustreamer v4l-utils; then
   echo "Error: Failed to install dependencies. Aborting installation."
   exit 1
 fi
@@ -30,21 +30,9 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Installing Python packages..."
-pip3 install flask
+pip3 install flask bcrypt
 if [ $? -ne 0 ]; then
-  echo "Error: Failed: pip3 install flask. Aborting installation."
-  exit 1
-fi
-
-pip3 install bcrypt 
-if [ $? -ne 0 ]; then
-  echo "Error: Failed: pip3 install bcrypt. Aborting installation."
-  exit 1
-fi
-
-pip3 install opencv-python
-if [ $? -ne 0 ]; then
-  echo "Error: Failed: pip3 install opencv-python. Aborting installation."
+  echo "Error: Failed to install python libraries. Aborting installation."
   exit 1
 fi
 
