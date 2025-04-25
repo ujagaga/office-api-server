@@ -207,8 +207,9 @@ def index():
     else:
         resolution_request = g.user.get("resolution")
 
-
     helper.run_ustreamer(start=True, resolution=resolution_request)
+
+    stream_host = request.host.split(':')[0]
 
     return render_template(
         "index.html",
@@ -219,7 +220,8 @@ def index():
         show_logout=True,
         show_home=False,
         resolutions=resolutions,
-        current_res=resolution_request
+        current_res=resolution_request,
+        stream_host=stream_host
     )
 
 
