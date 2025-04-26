@@ -122,7 +122,7 @@ def load_language():
             pass
 
 
-def run_ustreamer(start=True, resolution=config.VIDEO_RESOLUTION):
+def run_ustreamer(start=True, resolution=config.VIDEO_RESOLUTION, camera_index=config.CAMERA_INDEX):
 
     if start:
         cmd = "start"
@@ -130,7 +130,7 @@ def run_ustreamer(start=True, resolution=config.VIDEO_RESOLUTION):
         cmd = "stop"
 
     script_path = os.path.join(current_path, config.USTREAMER_SCRIPT)
-    subprocess.call([script_path, cmd, "0", resolution, f"{config.STREAM_TIMEOUT}"])
+    subprocess.call([script_path, cmd, f"{camera_index}", resolution, f"{config.STREAM_TIMEOUT}"])
 
 
 def check_supported_resolutions(camera_index=config.CAMERA_INDEX):
