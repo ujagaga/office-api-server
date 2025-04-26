@@ -1,4 +1,6 @@
 function resizeVideo() {
+
+    console.log("Resize");
     const videoContainer = document.getElementById('video_container');
     const videoImage = videoContainer.querySelector('img');
     const windowWidth = window.innerWidth;
@@ -24,9 +26,16 @@ function resizeVideo() {
     videoImage.style.height = '100%';
 }
 
+function delayResizeVideo(){
+    setTimeout(() => {
+        resizeVideo();
+    }, 1000);
+}
 
-// Call resizeVideo on page load
-window.addEventListener('load', resizeVideo);
+
+/* Call resizeVideo on page load. The resize happens before the first image arrives and alters the size,
+so needs to be triggered after a delay */
+window.addEventListener('load', delayResizeVideo);
 
 // Call resizeVideo on window resize
 window.addEventListener('resize', resizeVideo);

@@ -12,6 +12,7 @@ import database
 import os
 import subprocess
 
+
 current_path = os.path.dirname(os.path.realpath(__file__))
 lang_dir = os.path.join(current_path, 'lang')
 DEFAULT_LANG_ID = "eng"
@@ -162,6 +163,19 @@ def check_supported_resolutions(camera_index=config.CAMERA_INDEX):
         resolution = f"{key}x{resolutions[key]}"
         sorted_list.append(resolution)
 
-    print("Sorted Resolutions: ", sorted_list)
-
     return sorted_list
+
+
+def list_video_devices():
+    video_devices = {}
+    dev_dir = '/dev'
+    pattern = re.compile(r'^video\d+$')
+
+    for entry in os.listdir(dev_dir):
+        if pattern.match(entry):
+            dev_id = entry.replace("video", "")
+            resolutions = check_supported_resolutions(dev_id)
+            if len(resolutions) > 1:
+                video_devices[dev_id] = resolutions
+
+    return video_devices
