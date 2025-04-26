@@ -21,6 +21,7 @@ def init_db():
                     password TEXT,
                     status TEXT NOT NULL,
                     resolution TEXT,
+                    device TEXT,
                     token TEXT,                   
                     timestamp INTEGER
                 )
@@ -155,8 +156,8 @@ def add_user(email):
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO users (email, status, timestamp, resolution) VALUES (?, ?, ?, ?)",
-                (email, Status.PENDING.value, timestamp, config.VIDEO_RESOLUTION),
+                "INSERT INTO users (email, status, timestamp) VALUES (?, ?, ?)",
+                (email, Status.PENDING.value, timestamp),
             )
             conn.commit()
             return True
@@ -186,7 +187,7 @@ def delete_user(email):
         print(f"Exception: {e}")
 
 
-def update_user(email, status=None, token=None, password=None, resolution=None):
+def update_user(email, status=None, token=None, password=None, resolution=None, device=None):
     timestamp = int(time.time())
     updates = []
 
@@ -197,6 +198,8 @@ def update_user(email, status=None, token=None, password=None, resolution=None):
         updates.append(("password", password))
     if resolution is not None:
         updates.append(("resolution", resolution))
+    if device is not None:
+        updates.append(("device", device))
     if token is not None:
         updates.append(("token", token))
         updates.append(("timestamp", timestamp))  # Update timestamp when token is updated

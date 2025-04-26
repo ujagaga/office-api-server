@@ -1,6 +1,4 @@
 function resizeVideo() {
-
-    console.log("Resize");
     const videoContainer = document.getElementById('video_container');
     const videoImage = videoContainer.querySelector('img');
     const windowWidth = window.innerWidth;
@@ -32,7 +30,6 @@ function delayResizeVideo(){
     }, 1000);
 }
 
-
 /* Call resizeVideo on page load. The resize happens before the first image arrives and alters the size,
 so needs to be triggered after a delay */
 window.addEventListener('load', delayResizeVideo);
@@ -42,12 +39,23 @@ window.addEventListener('resize', resizeVideo);
 
 document.addEventListener('DOMContentLoaded', function() {
   const resolutionDropdown = document.getElementById('resolution');
+  const deviceDropdown = document.getElementById('device');
 
   if (resolutionDropdown) {
     resolutionDropdown.addEventListener('change', function() {
       const selectedResolution = this.value;
       // Construct the new URL with the resolution as a GET parameter
       const newURL = window.location.pathname + '?resolution=' + selectedResolution;
+      // Reload the page with the new URL
+      window.location.href = newURL;
+    });
+  }
+
+  if (deviceDropdown) {
+    deviceDropdown.addEventListener('change', function() {
+      const selectedDevice = this.value;
+      // Construct the new URL with the resolution as a GET parameter
+      const newURL = window.location.pathname + '?device=' + selectedDevice;
       // Reload the page with the new URL
       window.location.href = newURL;
     });

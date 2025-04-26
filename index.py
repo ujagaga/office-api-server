@@ -7,6 +7,7 @@ import database
 import helper
 import functools
 import time
+import json
 
 app = Flask(__name__)
 
@@ -105,7 +106,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    helper.run_ustreamer(False)
+    helper.run_ustreamer(start=False)
 
     response = redirect('/login')
     response.set_cookie('authToken', '', expires=0)
@@ -195,19 +196,35 @@ def reset_pass():
 def index():
     args = request.args
     resolution_request = args.get("resolution")
+    device_request = args.get("device")
 
     language = database.get_language(helper.DEFAULT_LANG_ID)
 
-    helper.run_ustreamer(False)
+    helper.run_ustreamer(start=False)
     time.sleep(1)
-    resolutions = helper.check_supported_resolutions()
+    video_devices = helper.list_video_devices()
 
-    if resolution_request:
-        database.update_user(email=g.user["email"], resolution=resolution_request)
-    else:
-        resolution_request = g.user.get("resolution")
+    if video_devices:
+        if not device_request:
+            device_request = g.user.get("device")
+        if not resolution_request:
+            resolution_request = g.user.get("resolution")
 
-    helper.run_ustreamer(start=True, resolution=resolution_request)
+        if not device_request or device_request not in video_devices.keys():
+            device_request = list(video_devices.keys())[0]
+        if not resolution_request or resolution_request not in video_devices[device_request]:
+            resolution_index = 0
+            resolution_count = len(video_devices[device_request])
+            if resolution_count > 2:
+                resolution_index = resolution_count - 2
+            elif resolution_count > 1:
+                resolution_index = resolution_count - 1
+
+            resolution_request = video_devices[device_request][resolution_index]
+
+        database.update_user(email=g.user["email"], resolution=resolution_request, device=device_request)
+
+        helper.run_ustreamer(video_device=device_request, resolution=resolution_request, start=True)
 
     stream_host = request.host.split(':')[0]
 
@@ -219,11 +236,11 @@ def index():
         colors=helper.default_colors,
         show_logout=True,
         show_home=False,
-        resolutions=resolutions,
-        current_res=resolution_request,
+        video_devices=video_devices,
+        resolution=resolution_request,
+        device=device_request,
         stream_host=stream_host
     )
-
 
 
 if __name__ == "__main__":

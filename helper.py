@@ -123,18 +123,17 @@ def load_language():
             pass
 
 
-def run_ustreamer(start=True, resolution=config.VIDEO_RESOLUTION, camera_index=config.CAMERA_INDEX):
-
+def run_ustreamer(video_device="0", resolution="", start=True):
     if start:
         cmd = "start"
     else:
         cmd = "stop"
 
     script_path = os.path.join(current_path, config.USTREAMER_SCRIPT)
-    subprocess.call([script_path, cmd, f"{camera_index}", resolution, f"{config.STREAM_TIMEOUT}"])
+    subprocess.call([script_path, cmd, f"{video_device}", resolution, f"{config.STREAM_TIMEOUT}"])
 
 
-def check_supported_resolutions(camera_index=config.CAMERA_INDEX):
+def check_supported_resolutions(camera_index):
     try:
         output = subprocess.check_output(
             ["v4l2-ctl", f"--device=/dev/video{camera_index}", "--list-formats-ext"],
@@ -178,4 +177,7 @@ def list_video_devices():
             if len(resolutions) > 1:
                 video_devices[dev_id] = resolutions
 
-    return video_devices
+    if len(video_devices.keys()) > 0:
+        return video_devices
+    else:
+        return None

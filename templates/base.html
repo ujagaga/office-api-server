@@ -44,12 +44,28 @@
         <nav class="navbar">
           <div class="container">
             <div id="navbarMenuHeroA" class="navbar-menu">
-              {% if resolutions %}
-              <select name="resolution" id="resolution" class="navbar-item">
-                {% for res in resolutions %}
-                <option value="{{res}}" {% if current_res==res %} selected {% endif %}>{{res}}</option>
-                {% endfor %}
-              </select>
+
+              {% if video_devices %}
+              <div class="navbar-item">
+                <label for="device">Camera:</label>
+                <select name="device" id="device">
+                  {% for dev in video_devices %}
+                  <option value="{{dev}}" {% if dev==device %} selected {% endif %}>{{ loop.index0 }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="navbar-item">
+                <label for="resolution">Resolution:</label>
+                <select name="resolution" id="resolution">
+                  {% for dev in video_devices %}
+                  {% if dev==device %}
+                  {% for res in video_devices[dev] %}
+                  <option value="{{res}}" {% if res==resolution %} selected {% endif %}>{{res}}</option>
+                  {% endfor %}
+                  {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
               {% endif %}
 
               {% if show_logout %}
