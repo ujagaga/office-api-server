@@ -4,7 +4,7 @@ function resizeVideo() {
     const videoContainer = document.getElementById('video_container');
     const videoImage = videoContainer.querySelector('img');
     const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight - 100;
+    const windowHeight = window.innerHeight - 150;
 
     const imageNaturalWidth = videoImage.naturalWidth;
     const imageNaturalHeight = videoImage.naturalHeight;

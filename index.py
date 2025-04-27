@@ -8,6 +8,7 @@ import database
 import helper
 import functools
 import time
+import uart_switch
 
 app = Flask(__name__)
 
@@ -19,6 +20,7 @@ app.config.update(
 )
 
 socketio = SocketIO(app)
+controller=uart_switch.PowerSocketsController(port=config.UART_SW_PORT, baudrate=config.UART_SW_BAUD)
 
 
 def login_required(func):
@@ -247,17 +249,13 @@ def index():
 
 @socketio.on('set_switch')
 def set_switch(switch_id, state):
-    sw = [False, False]
-    if switch_id < len(sw):
-        sw[switch_id] = state
-
+    sw = controller.set_socket(switch_id, int(state))
     emit('switch', sw)
 
 
 @socketio.on('get_switch')
 def get_switch():
-    sw = [False, True]
-
+    sw = controller.get_state()
     emit('switch', sw)
 
 
