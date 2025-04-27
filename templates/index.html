@@ -6,6 +6,30 @@
     <img src="http://{{ stream_host }}:8013/stream" id="stream_img"/>
   </div>
 </div>
+<div id="footer">
+  <div class="container" >
+    <div class="navbar-menu">
+      {% if show_logout %}
 
+      <label class="switch_container">
+        Socket 1
+        <div class="switch">
+          <input type="checkbox" id="socket1">
+          <span class="slider"></span>
+        </div>
+      </label>
+
+      <label class="switch_container">
+        Socket 2
+        <div class="switch">
+          <input type="checkbox" id="socket2">
+          <span class="slider"></span>
+        </div>
+      </label>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<script src="static/js/socket.io.min.js"></script>
 <script src="static/js/home.js"></script>
 {% endblock %}

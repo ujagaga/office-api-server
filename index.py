@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, redirect, request, flash, g
+from flask_socketio import SocketIO, emit
 import config
 import database
 import helper
 import functools
 import time
-import json
 
 app = Flask(__name__)
 
@@ -17,6 +17,8 @@ app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
 )
+
+socketio = SocketIO(app)
 
 
 def login_required(func):
@@ -243,5 +245,21 @@ def index():
     )
 
 
+@socketio.on('set_switch')
+def set_switch(switch_id, state):
+    sw = [False, False]
+    if switch_id < len(sw):
+        sw[switch_id] = state
+
+    emit('switch', sw)
+
+
+@socketio.on('get_switch')
+def get_switch():
+    sw = [False, True]
+
+    emit('switch', sw)
+
+
 if __name__ == "__main__":
-    Flask.run(app, host="0.0.0.0", port=config.SERVER_PORT, debug=False)
+    socketio.run(app, host='0.0.0.0', port=config.SERVER_PORT, debug=True, allow_unsafe_werkzeug=True)

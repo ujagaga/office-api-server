@@ -1,8 +1,10 @@
+var socket;
+
 function resizeVideo() {
     const videoContainer = document.getElementById('video_container');
     const videoImage = videoContainer.querySelector('img');
     const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight - 50;
+    const windowHeight = window.innerHeight - 100;
 
     const imageNaturalWidth = videoImage.naturalWidth;
     const imageNaturalHeight = videoImage.naturalHeight;
@@ -34,30 +36,48 @@ function delayResizeVideo(){
 so needs to be triggered after a delay */
 window.addEventListener('load', delayResizeVideo);
 
-// Call resizeVideo on window resize
 window.addEventListener('resize', resizeVideo);
 
 document.addEventListener('DOMContentLoaded', function() {
-  const resolutionDropdown = document.getElementById('resolution');
-  const deviceDropdown = document.getElementById('device');
+    const resolutionDropdown = document.getElementById('resolution');
+    const deviceDropdown = document.getElementById('device');
 
-  if (resolutionDropdown) {
+    if (resolutionDropdown) {
     resolutionDropdown.addEventListener('change', function() {
-      const selectedResolution = this.value;
-      // Construct the new URL with the resolution as a GET parameter
-      const newURL = window.location.pathname + '?resolution=' + selectedResolution;
-      // Reload the page with the new URL
-      window.location.href = newURL;
+        const selectedResolution = this.value;
+        const newURL = window.location.pathname + '?resolution=' + selectedResolution;
+        window.location.href = newURL;
     });
-  }
+    }
 
-  if (deviceDropdown) {
-    deviceDropdown.addEventListener('change', function() {
-      const selectedDevice = this.value;
-      // Construct the new URL with the resolution as a GET parameter
-      const newURL = window.location.pathname + '?device=' + selectedDevice;
-      // Reload the page with the new URL
-      window.location.href = newURL;
+    if (deviceDropdown) {
+        deviceDropdown.addEventListener('change', function() {
+            const selectedDevice = this.value;
+            const newURL = window.location.pathname + '?device=' + selectedDevice;
+            window.location.href = newURL;
+        });
+    }
+
+    const socket = io();
+
+    socket.on("switch", function (msg) {
+        msg.forEach((state, index) => {
+            const switchElement = document.getElementById(`socket${index + 1}`);
+            if (switchElement) {
+                switchElement.checked = state;
+            }
+        });
     });
-  }
+
+    socket.emit('get_switch');
+
+    document.querySelectorAll('input[type="checkbox"][id^="socket"]').forEach((element) => {
+        element.addEventListener('change', function() {
+            const idNumber = parseInt(this.id.replace('socket', '')) - 1;
+            const isOn = this.checked;
+            socket.emit('set_switch', idNumber, isOn);
+        });
+    });
 });
+
+
