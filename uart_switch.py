@@ -85,27 +85,27 @@ class PowerSocketsController:
 
 
 
-if __name__ == "__main__":
-    controller = PowerSocketsController(port=config.UART_SW_PORT, baudrate=config.UART_SW_BAUD)
-    print("Connected:", controller.serial)
-    if controller.serial:
-        try:
-            print("Current State:", controller.get_state())
-
-            print("Turning ON socket 0...")
-            print(controller.set_socket_on(0))
-
-            print("Turning ON socket 1...")
-            print(controller.set_socket_on(1))
-
-            print("Turning OFF socket 1...")
-            print(controller.set_socket_off(1))
-
-            print("Turning OFF socket 0...")
-            print(controller.set_socket_off(0))
-
-            print("Reinit:")
-            print(controller.reinit())
-
-        finally:
-            controller.close()
+# if __name__ == "__main__":
+#     controller = PowerSocketsController(port=config.UART_SW_PORT, baudrate=config.UART_SW_BAUD)
+#     print("Connected:", controller.serial)
+#     if controller.serial:
+#         try:
+#             print("Current State:", controller.get_state())
+#
+#             print("Turning ON socket 0...")
+#             print(controller.set_socket_on(0))
+#
+#             print("Turning ON socket 1...")
+#             print(controller.set_socket_on(1))
+#
+#             print("Turning OFF socket 1...")
+#             print(controller.set_socket_off(1))
+#
+#             print("Turning OFF socket 0...")
+#             print(controller.set_socket_off(0))
+#
+#             print("Reinit:")
+#             print(controller.reinit())
+#
+#         finally:
+#             controller.close()

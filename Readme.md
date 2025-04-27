@@ -1,6 +1,7 @@
 # Office Api Server
-Personal server for what ever I need. At the moment it just has a login and then starts a webcam video stream.
-i am using it to monitor my 3D printer.
+Personal server for what ever I need. At the moment it has a login and then starts a webcam video stream.
+At the bottom of the home page you can controll two relays controlling 2 AC sockets. 
+I am using this to monitor and power off my 3D printer and a scooter charger.
 
 ## Development environment setup
 
@@ -9,7 +10,7 @@ i am using it to monitor my 3D printer.
 
          sudo apt install ustreamer
          source .venv/bin/activate
-         pip install flask bcrypt opencv-python
+         pip install flask bcrypt opencv-python flask_socketio pyserial
 
 
 - For sqlite database browser I recommend:

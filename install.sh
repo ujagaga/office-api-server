@@ -30,7 +30,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Installing Python packages..."
-pip3 install flask bcrypt flask_socketio
+pip3 install flask bcrypt flask_socketio pyserial
 if [ $? -ne 0 ]; then
   echo "Error: Failed to install python libraries. Aborting installation."
   exit 1
