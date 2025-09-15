@@ -14,6 +14,7 @@ ENDPOINT_URL = "ujagaga.tplinkdns.com"
 APPLICATION_LOCALE = ("en_US", "UTF-8")
 LOCALE_LIST = [("sr_RS", "UTF-8"), ("en_US", "UTF-8")]
 USTREAMER_SCRIPT = 'ustreamer.sh'
+USTREAMER_PORT = 8013
 STREAM_TIMEOUT=60
 UART_SW_PORT="/dev/ttyUSB0"
 UART_SW_BAUD=9600

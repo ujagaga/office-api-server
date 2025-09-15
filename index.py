@@ -243,7 +243,8 @@ def index():
         video_devices=video_devices,
         resolution=resolution_request,
         device=device_request,
-        stream_host=stream_host
+        stream_host=stream_host,
+        stream_port=config.USTREAMER_PORT
     )
 
 
